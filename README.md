@@ -1,4 +1,15 @@
-# Site Sentry — Website Care Plans landing page
+# Site Sentry
+
+The SiteSentry business in one repo — the thing you sell, and the thing you run it with.
+
+| Folder | What it is |
+|---|---|
+| **`/` (repo root)** | The **marketing landing page** — a single self-contained `index.html` that sells the care plans. Documented below. |
+| **[`maintenance-agent/`](maintenance-agent/)** | The **Claude Code maintenance agent** — the runbooks, guardrails, and site registry that actually deliver the care-plan work over SSH + WP-CLI. See [`maintenance-agent/README.md`](maintenance-agent/README.md). |
+
+---
+
+## Website Care Plans landing page
 
 A conversion-focused landing page for selling website maintenance / care plans to
 small businesses. It ships as a **single self-contained `index.html`** — fonts, CSS,
