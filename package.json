@@ -1,0 +1,15 @@
+{
+  "name": "site-sentry-landing",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Conversion-focused landing page for website care plans — a single self-contained HTML file, built from editable source.",
+  "type": "module",
+  "scripts": {
+    "build": "node tools/assemble.mjs",
+    "fonts": "node tools/fetch-fonts.mjs",
+    "verify": "node tools/verify.mjs"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.44.0"
+  }
+}
