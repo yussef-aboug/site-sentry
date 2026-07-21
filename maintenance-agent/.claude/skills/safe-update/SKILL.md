@@ -12,9 +12,18 @@ description: >
 Order of operations is fixed: **verify backup → baseline → staging → production, one item at
 a time → verify → log.** Never reorder. Never batch to save time on production.
 
+## Tier & scope (read before Phase 0)
+- **Cadence comes from the plan** (see `CADENCE.md`): Essentials = monthly, Peace of Mind and
+  Total Care = weekly. Read `plan:` from the site file; don't assume. Running updates
+  off-cadence is fine when the operator asks, but the *routine* rhythm is the tier's.
+- **If the site is a store** (WooCommerce or another commerce plugin is active), STOP using
+  this skill for the update and use **`ecommerce-care`** instead — stores need maintenance
+  mode, order-safe DB handling (`wp wc update`), and a test-order verification this skill
+  doesn't cover. Come back here only for the non-store sites.
+
 ## Phase 0 — Preflight (read-only)
-1. Read `sites/<slug>.md`. Confirm environment, wp_path, fragile_plugins, maintenance window.
-   Production + outside window → ask operator before proceeding.
+1. Read `sites/<slug>.md`. Confirm environment, plan/tier, wp_path, fragile_plugins,
+   maintenance window, and any `quirks:`. Production + outside window → ask operator first.
 2. Baseline: `scripts/health-check.sh <url> "<homepage_keyword>"` — must PASS. If baseline
    fails, STOP: fix-the-site comes first (downtime-triage skill), never update a broken site.
 3. Inventory what needs updating:
@@ -64,6 +73,8 @@ full health check on every critical page.
 ## Phase 4 — Close out
 - Journal entry: date, items updated (old→new versions), checks run, anything rolled back,
   rollback point location.
+- Update the site file's `## Service tracking`: set `last_update_run:` (and
+  `last_security_scan:` if you scanned) to today's date, so `roster.sh` reflects it.
 - One plain-English line for the client report, e.g. "Applied 6 security updates; all systems
   verified healthy afterward."
 - Note in journal: "monitor for 24–48h" — some breakage only appears when cron jobs or real
