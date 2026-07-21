@@ -25,6 +25,41 @@ Reliability here is architecture, not hope:
 5. **You are the gate.** Production changes wait for your `APPROVED: <task>` message.
    The agent drafts client emails; only you send them.
 
+## Plans, cadence & the skill library
+
+One agent delivers all three landing-page plans — the tier only changes frequency, quantity,
+and priority, never the safety discipline. `CADENCE.md` is the source of truth for what each
+tier gets and how often; each site's `plan:` field selects its column.
+
+- **`scripts/roster.sh`** — read-only "what's due across all clients" dashboard (per-tier
+  cadence vs. each site's `## Service tracking` dates).
+- **`maintenance-cycle`** skill — the batch orchestrator: reads the roster, then works each
+  due site one at a time through the right per-tier skills, with all gates intact. This is
+  what makes the plans deliverable across a whole roster ("run this week's maintenance").
+
+Skills, by what they deliver:
+
+| Skill | Delivers | Tiers |
+|---|---|---|
+| `site-onboarding` | Take a new site into care | all |
+| `safe-update` | Security/software updates (non-stores) | all (monthly/weekly by tier) |
+| `backup-restore` | Backups, restores, monthly drill | all |
+| `security-hardening` | Security baseline, malware/compromise response | all |
+| `downtime-triage` | Recover a down/broken site | all |
+| `monthly-report` | The plain-English client report | all |
+| `small-edits` | Client content edits within the monthly budget | peace-of-mind, total-care |
+| `link-error-check` | Broken-link & error scan | peace-of-mind, total-care |
+| `speed-optimization` | Performance monitor (all incl.) + optimize (total-care) | peace-of-mind, total-care |
+| `ecommerce-care` | WooCommerce/store maintenance, order-safe | total-care (stores) |
+| `quarterly-review` | Quarterly strategy briefing pack | total-care |
+| `maintenance-cycle` | Batch-service the whole roster on schedule | operator-driven |
+
+**Scheduling note:** the cycle is *operator-triggered* by design — production changes need
+your approval (Law 2), so nothing auto-updates a live site unattended. To put it on a rhythm,
+run `maintenance-cycle` on your own schedule (a weekly calendar reminder, a Windows Task that
+opens the session, or a Claude Code Routine), and it tells you what's due and walks you through
+it. That keeps the cadence promise without ever removing the human gate on production.
+
 ## Setup (one time, ~20 minutes)
 1. Install Claude Code (https://code.claude.com/docs) and sign in.
 2. From the repo, enter this folder: `cd maintenance-agent` (the shell scripts are committed

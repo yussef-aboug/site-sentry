@@ -47,16 +47,39 @@ Never write passwords, API keys, or SSH credentials into any file in this projec
 logs and site files. SSH access uses host aliases from `~/.ssh/config` (key-based). If a task
 seems to require a credential you don't have, ask the operator — never guess, never hardcode.
 
+## Plans & cadence
+
+One agent delivers all three plans (Essentials, Peace of Mind, Total Care). The plan only
+changes **frequency, quantity, and priority** — never the safety discipline. Read each site's
+`plan:` field; a site with no plan is a config error (stop and ask), never a guess.
+
+- `CADENCE.md` — the source of truth for what each tier gets and how often. Read it when
+  deciding what a site is owed (weekly vs monthly updates, whether it gets link/perf checks,
+  edit/dev budgets, quarterly reviews).
+- `scripts/roster.sh [slug]` — read-only "what's due" dashboard across all sites. Start any
+  routine/batch work here.
+- **Stores force Total Care.** Any site running WooCommerce (or another commerce plugin) must
+  be `total-care` and is serviced via the `ecommerce-care` skill, not plain `safe-update`. A
+  store on a lower tier is a pricing/scope flag for the operator.
+- **Budgets are monthly ceilings** (`edit_minutes_used_this_month`, `dev_hours_used_this_month`),
+  reset on the 1st. At the ceiling, stop and let the operator decide.
+- Operator-SLA promises (same-day / 7-day emergency response) are **human** commitments you
+  support with fast triage and drafts — they are not actions you can complete yourself.
+
 ## Environment
 
 - `sites/` — one file per client site (copy `_TEMPLATE.md`). A site not registered here does
-  not exist for you.
+  not exist for you. Read its `## Host quirks` and `## Service tracking` sections first.
 - `logs/<site-slug>.md` — append-only change journal. Every action gets a dated entry:
   what/why/commands run/verification result/rollback point. Reports are built from these.
+  After servicing a site, also refresh its `## Service tracking` dates so `roster.sh` is accurate.
 - `scripts/health-check.sh <url> [expected-keyword]` — run before and after every change.
-- `.claude/skills/` — your runbooks. When a task matches a skill, FOLLOW THE SKILL EXACTLY.
-  Do not improvise a "better" sequence mid-task. If a skill doesn't fit the situation, say so
-  and propose a plan instead of freelancing.
+- `.claude/skills/` — your runbooks: `site-onboarding`, `safe-update`, `backup-restore`,
+  `security-hardening`, `small-edits`, `downtime-triage`, `monthly-report`, `link-error-check`,
+  `speed-optimization`, `ecommerce-care`, `quarterly-review`, and `maintenance-cycle` (the
+  batch orchestrator across all sites). When a task matches a skill, FOLLOW THE SKILL EXACTLY.
+  Do not improvise a "better" sequence mid-task. If a skill doesn't fit, say so and propose a
+  plan instead of freelancing.
 
 ## When to stop and escalate to the operator
 

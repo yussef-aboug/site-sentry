@@ -45,12 +45,23 @@ primary: InstaWP snapshots — the off-server restore point on this host (scp do
 secondary: WP Umbrella (connected — InitUmbrella must-use plugin present), plus an on-server
   `wp db export` as a quick pre-change dump (stays on the server; not a substitute for a
   snapshot).
-last_restore_drill: never — good first exercise
+# (restore-drill date is tracked under ## Service tracking below)
 
 ## Inventory notes
 theme: [check with: wp theme list --status=active]
 fragile_plugins: none yet — install a page builder later to practice on fragile territory
 staging: this IS the practice environment
+
+## Service tracking (agent updates these; roster.sh reads them)
+last_update_run: [date]
+last_security_scan: [date]
+last_link_check: [date]
+last_performance_check: [date]
+last_report: [YYYY-MM]
+last_restore_drill: [date]
+last_quarterly_review: [date]
+edit_minutes_used_this_month: 0
+dev_hours_used_this_month: 0
 
 ## History
 journal: logs/practice-sandbox.md

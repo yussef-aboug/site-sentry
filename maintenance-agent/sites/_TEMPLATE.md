@@ -20,8 +20,10 @@ dns_registrar: [Registrar]    # For expiry checks; agent never changes DNS (Tier
 quirks: none known yet
 
 ## Care plan
-plan: peace-of-mind            # essentials | peace-of-mind | total-care
-monthly_edit_budget_minutes: 60
+plan: peace-of-mind            # essentials | peace-of-mind | total-care  (sets cadence — see CADENCE.md)
+monthly_edit_budget_minutes: 60          # 0 for essentials; 60 for peace-of-mind/total-care
+monthly_dev_budget_hours: 0              # total-care only: 2
+is_store: no                             # yes if WooCommerce/other commerce plugin → must be total-care
 maintenance_window: Tuesdays 07:00–09:00 ET
 client_contact: [Name] — [email]   # Agent DRAFTS emails only; operator sends
 
@@ -37,12 +39,23 @@ critical_functions:
 ## Backups
 primary: WP Umbrella daily, off-site (verify in dashboard before changes)
 secondary: [UpdraftPlus → Google Drive | host snapshots]
-last_restore_drill: [date]         # Refresh monthly via backup-restore skill
+# (restore-drill date is tracked under ## Service tracking below)
 
 ## Inventory notes
 theme: [name]
 fragile_plugins: [e.g. page builder, WooCommerce — never bulk-update these]
 staging: [InstaWP clone | host staging URL | none — if none, Tier 2 gate applies to everything]
+
+## Service tracking (agent updates these dates after each run; roster.sh reads them)
+last_update_run: [date]            # YYYY-MM-DD
+last_security_scan: [date]
+last_link_check: [date]            # peace-of-mind / total-care
+last_performance_check: [date]     # peace-of-mind / total-care
+last_report: [YYYY-MM]             # month of the last monthly report
+last_restore_drill: [date]
+last_quarterly_review: [date]      # total-care only
+edit_minutes_used_this_month: 0    # resets on the 1st
+dev_hours_used_this_month: 0       # total-care only
 
 ## History
 journal: logs/[slug].md
