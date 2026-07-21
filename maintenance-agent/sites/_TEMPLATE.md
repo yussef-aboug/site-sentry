@@ -10,6 +10,15 @@ wp_path: /var/www/html         # Directory containing wp-config.php on the serve
 hosting: [Host name + link to their status page]
 dns_registrar: [Registrar]    # For expiry checks; agent never changes DNS (Tier 3)
 
+## Host quirks — connection notes (fill in during onboarding; agent READS this first)
+# Most standard hosts (cPanel, managed WordPress) need nothing here — plain `ssh <alias> "cmd"`
+# and `scp` both work. Record anything non-standard you discover, e.g.:
+#   - Needs a forced PTY (RequestTTY force) or `ssh <alias> "cmd"` hangs — and note that scp
+#     then won't work, so back up via the host's own snapshots instead.
+#   - Non-obvious wp_path, or `wp` requires an explicit --path.
+#   - WP-CLI unavailable (shared host, no SSH) -> advisory mode via WP Umbrella + wp-admin.
+quirks: none known yet
+
 ## Care plan
 plan: peace-of-mind            # essentials | peace-of-mind | total-care
 monthly_edit_budget_minutes: 60

@@ -7,6 +7,23 @@ wp_path: /home/nadijuwefo1951/web/oddball-scarab-73427d.instawp.site/public_html
 hosting: InstaWP (Sandbox $2/mo tier) — status: https://status.instawp.com
 dns_registrar: n/a (instawp.site subdomain)
 
+## ⚠ Host quirks — READ before any SSH/WP-CLI on this host (InstaWP-specific, confirmed by testing)
+- **A PTY is required.** Plain `ssh sandbox "cmd"` (no TTY) HANGS after the command is
+  accepted. `~/.ssh/config` sets `RequestTTY force` for this host to prevent that.
+  Never use `ssh -T` here — it disables the PTY and hangs.
+- **Run WP-CLI from wp_path.** SSH lands in the home dir (no WordPress there), so bare
+  `wp ...` fails with "not a WordPress installation". Always `cd` into wp_path first.
+- **Working command pattern from an automated (no local TTY) shell:** a forced TTY makes
+  ssh ignore a trailing command argument in that context, so feed commands over stdin:
+      printf 'cd <wp_path> && wp core version\nexit\n' | ssh sandbox 2>&1
+  (equivalently `ssh -tt sandbox "cd <wp_path> && wp core version"`).
+- **scp does NOT work here.** scp needs a clean, non-TTY channel, which `RequestTTY force`
+  breaks. Do not scp files off this server. Off-server backups = InstaWP snapshots (below).
+
+  These are InstaWP-sandbox quirks. Standard client hosts (cPanel, managed WordPress) do
+  not hang on plain ssh, so they won't set RequestTTY force and scp works normally there —
+  record each real client's own quirks in that client's site file.
+
 ## Care plan
 plan: n/a — internal practice site
 monthly_edit_budget_minutes: unlimited
@@ -22,8 +39,12 @@ critical_functions:
   - "Contact form renders (WPForms)"
 
 ## Backups
-primary: InstaWP snapshots (instawp versions create) — one-command restore
-secondary: WP Umbrella (connected)
+primary: InstaWP snapshots — the off-server restore point on this host (scp does not work
+  here; see Host quirks). Take from the InstaWP dashboard (Snapshots → Create), or install
+  the InstaWP CLI (`npm i -g @instawp/cli && instawp login`) for `instawp versions create`.
+secondary: WP Umbrella (connected — InitUmbrella must-use plugin present), plus an on-server
+  `wp db export` as a quick pre-change dump (stays on the server; not a substitute for a
+  snapshot).
 last_restore_drill: never — good first exercise
 
 ## Inventory notes
