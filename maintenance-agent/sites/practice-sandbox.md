@@ -14,25 +14,35 @@ maintenance_window: anytime
 client_contact: operator (you)
 
 ## Verification targets
-homepage_keyword: "[open the site, pick a unique phrase from the homepage, paste it here]"
+homepage_keyword: "Welcome to WordPress"   # default first-post text; replace once real content exists
 critical_pages:
   - https://oddball-scarab-73427d.instawp.site/
-  - https://oddball-scarab-73427d.instawp.site/contact/   # if you built one in lesson 1
+  - https://oddball-scarab-73427d.instawp.site/contact/   # not built yet — currently 404, build in a later lesson
 critical_functions:
-  - "Contact form renders (WPForms)"
+  - "Contact form renders (WPForms)"   # not applicable yet — no contact page/plugin installed
 
 ## Backups
-primary: InstaWP snapshots (instawp versions create) — one-command restore
-secondary: WP Umbrella (connected)
+primary: InstaWP snapshots (instawp versions create) — one-command restore. Verified restore point: `sitesentry-baseline-2026-07-21` (permanent as-found baseline, created 2026-07-21 by operator via InstaWP dashboard).
+secondary: WP Umbrella — NOT actually connected yet (corrected 2026-07-21; previously listed as connected in error). `InitUmbrella` must-use plugin seen in `wp plugin list` is InstaWP's own platform plugin, unrelated.
 last_restore_drill: never — good first exercise
 
 ## Inventory notes
-theme: [check with: wp theme list --status=active]
+theme: twentytwentyfive (active, 1.5) — confirmed 2026-07-21 via `wp theme list`
 fragile_plugins: none yet — install a page builder later to practice on fragile territory
 staging: this IS the practice environment
 
+## SSH operational note
+`RequestTTY force` is set for this host on purpose. Plain `ssh sandbox "<cmd>"` hangs from a
+non-interactive shell (forced PTY waits at a prompt, never runs the argv command). Use:
+`printf 'cd <wp_path> && <command>\nexit\n' | ssh sandbox`. Never add `-T`/disable the TTY.
+Never use scp/sftp against this alias — the forced-TTY channel breaks file transfer; use
+InstaWP snapshots for any off-server copy.
+
 ## History
 journal: logs/practice-sandbox.md
-onboarded: [today's date]
+onboarded: 2026-07-21
 notes: Training site. Break it on purpose. If it dies permanently, spin up a new one —
-  that itself is good practice.
+  that itself is good practice. Baseline pass (2026-07-21): clean WP 7.0 install, PHP 8.3.27,
+  checksums verify clean, no admin-named user. Gaps found: DISALLOW_FILE_EDIT not set, no
+  security/rollback/backup plugin installed yet, WP version disclosed in generator meta tag.
+  Fixes queued pending InstaWP snapshot confirmation (Law 1).
