@@ -2,8 +2,8 @@
 
 environment: sandbox           # ← Tier 1: agent may make changes freely (snapshot first)
 url: https://oddball-scarab-73427d.instawp.site
-ssh_alias: sandbox             # Set up in ~/.ssh/config from InstaWP dashboard SSH details
-wp_path: ~/web                 # Verify: SSH in and find the dir containing wp-config.php
+ssh_alias: sandbox             # Configured in ~/.ssh/config (key auth + RequestTTY force for InstaWP)
+wp_path: /home/nadijuwefo1951/web/oddball-scarab-73427d.instawp.site/public_html   # confirmed via SSH
 hosting: InstaWP (Sandbox $2/mo tier) — status: https://status.instawp.com
 dns_registrar: n/a (instawp.site subdomain)
 
