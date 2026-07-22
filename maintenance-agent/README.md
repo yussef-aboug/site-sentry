@@ -11,7 +11,8 @@ guardrails and human approval gates on production.
 
 ## What makes it "reliable"
 Reliability here is architecture, not hope:
-1. **Deterministic tripwire.** A PreToolUse hook (`.claude/hooks/guard.sh`) physically blocks
+1. **Deterministic tripwire.** A PreToolUse hook (`.claude/hooks/guard.cjs`, Node — runs on
+   Windows/macOS/Linux alike; a bash hook silently no-ops on Windows) physically blocks
    catastrophic commands (database drops, recursive deletes, etc.) before they execute — this
    works even if the model is confused or a malicious webpage tries to inject instructions.
    Instructions alone can fail under pressure; hooks don't.
@@ -62,8 +63,11 @@ it. That keeps the cadence promise without ever removing the human gate on produ
 
 ## Setup (one time, ~20 minutes)
 1. Install Claude Code (https://code.claude.com/docs) and sign in.
-2. From the repo, enter this folder: `cd maintenance-agent` (the shell scripts are committed
-   executable; if a checkout dropped the bit, run `chmod +x scripts/*.sh .claude/hooks/*.sh`).
+2. From the repo, enter this folder: `cd maintenance-agent` and always launch `claude` from
+   here so `.claude/settings.json` (which wires the guard hook) loads. The `scripts/*.sh`
+   helpers are committed executable; if a checkout dropped the bit, run `chmod +x scripts/*.sh`.
+   The guard hook is `.claude/hooks/guard.cjs` and runs via `node` — no executable bit or bash
+   needed, so it fires on Windows too (a bash hook does not).
 3. SSH: add each site as a key-authenticated alias in `~/.ssh/config`, e.g.
    ```
    Host sandbox
