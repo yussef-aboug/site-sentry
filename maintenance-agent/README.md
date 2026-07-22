@@ -63,11 +63,14 @@ it. That keeps the cadence promise without ever removing the human gate on produ
 
 ## Setup (one time, ~20 minutes)
 1. Install Claude Code (https://code.claude.com/docs) and sign in.
-2. From the repo, enter this folder: `cd maintenance-agent` and always launch `claude` from
-   here so `.claude/settings.json` (which wires the guard hook) loads. The `scripts/*.sh`
-   helpers are committed executable; if a checkout dropped the bit, run `chmod +x scripts/*.sh`.
-   The guard hook is `.claude/hooks/guard.cjs` and runs via `node` — no executable bit or bash
-   needed, so it fires on Windows too (a bash hook does not).
+2. Open the repo in Claude Code and run agent tasks from `maintenance-agent/`. The guard hook
+   is registered at the **repo root** (`site-sentry/.claude/settings.json`, pointing at
+   `node maintenance-agent/.claude/hooks/guard.cjs`) — Claude Code loads hook config from the
+   PROJECT ROOT, so a subfolder-only `settings.json` silently does not register (skills
+   auto-discover from subfolders, hooks do not). Root registration means the guard loads
+   whether you open `site-sentry` or `maintenance-agent`. It runs via `node` (no bash, no
+   executable bit) so it fires on Windows too. `scripts/*.sh` helpers are committed executable;
+   if a checkout dropped the bit, run `chmod +x scripts/*.sh`.
 3. SSH: add each site as a key-authenticated alias in `~/.ssh/config`, e.g.
    ```
    Host sandbox
