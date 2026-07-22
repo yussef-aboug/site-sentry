@@ -31,30 +31,31 @@ maintenance_window: anytime
 client_contact: operator (you)
 
 ## Verification targets
-homepage_keyword: "[open the site, pick a unique phrase from the homepage, paste it here]"
+homepage_keyword: "Welcome to WordPress"   # default first-post text; replace once real content exists
 critical_pages:
   - https://oddball-scarab-73427d.instawp.site/
-  - https://oddball-scarab-73427d.instawp.site/contact/   # if you built one in lesson 1
+  - https://oddball-scarab-73427d.instawp.site/contact/   # not built yet — currently 404, build in a later lesson
 critical_functions:
-  - "Contact form renders (WPForms)"
+  - "Contact form renders (WPForms)"   # not applicable yet — no contact page/plugin installed
 
 ## Backups
-primary: InstaWP snapshots — the off-server restore point on this host (scp does not work
-  here; see Host quirks). Take from the InstaWP dashboard (Snapshots → Create), or install
-  the InstaWP CLI (`npm i -g @instawp/cli && instawp login`) for `instawp versions create`.
-secondary: WP Umbrella (connected — InitUmbrella must-use plugin present), plus an on-server
-  `wp db export` as a quick pre-change dump (stays on the server; not a substitute for a
-  snapshot).
+primary: InstaWP snapshots — the off-server restore point on this host (scp doesn't work here;
+  take from the InstaWP dashboard, or `instawp versions create` if you install the InstaWP CLI).
+  Verified restore point: `sitesentry-baseline-2026-07-21` (permanent as-found baseline, created
+  2026-07-21 by operator via the InstaWP dashboard).
+secondary: WP Umbrella — NOT connected yet (corrected 2026-07-21; was listed as connected in
+  error). The `InitUmbrella` must-use plugin seen in `wp plugin list` is InstaWP's own platform
+  plugin, unrelated. Plus an on-server `wp db export` as a quick pre-change dump.
 # (restore-drill date is tracked under ## Service tracking below)
 
 ## Inventory notes
-theme: [check with: wp theme list --status=active]
+theme: twentytwentyfive (active, 1.5) — confirmed 2026-07-21 via `wp theme list`
 fragile_plugins: none yet — install a page builder later to practice on fragile territory
 staging: this IS the practice environment
 
 ## Service tracking (agent updates these; roster.sh reads them)
-last_update_run: [date]
-last_security_scan: [date]
+last_update_run: 2026-07-21
+last_security_scan: 2026-07-21
 last_link_check: [date]
 last_performance_check: [date]
 last_report: [YYYY-MM]
@@ -65,6 +66,10 @@ dev_hours_used_this_month: 0
 
 ## History
 journal: logs/practice-sandbox.md
-onboarded: [today's date]
+onboarded: 2026-07-21
 notes: Training site. Break it on purpose. If it dies permanently, spin up a new one —
-  that itself is good practice.
+  that itself is good practice. Baseline pass (2026-07-21): clean WP 7.0 install, PHP 8.3.27,
+  checksums verify clean, no admin-named user. Gaps found and fixed 2026-07-21: set
+  DISALLOW_FILE_EDIT, installed Wordfence + WP Rollback + UpdraftPlus + WP Super Cache,
+  patched wp-health 2.25.0→2.25.1. Still open: hide generator-tag version, point UpdraftPlus
+  at cloud storage, connect real WP Umbrella + UptimeRobot.
