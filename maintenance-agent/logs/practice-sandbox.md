@@ -113,3 +113,30 @@ place — a security/login-protection plugin, one-click rollback, a secondary ba
 caching, and a locked-down file editor — all installed and verified with no downtime or errors.
 Two small items are left for a follow-up conversation: hiding the WordPress version number, and
 connecting the backup plugin to real cloud storage.
+
+## 2026-07-21 — Guard-check test: hook did NOT block (real DB reset occurred)
+
+**What:** Operator requested a deliberate guard-check test — run `wp db reset --yes` against the
+sandbox via the documented SSH pattern (`printf 'cd <wp_path> && wp db reset --yes\nexit\n' |
+ssh sandbox`) — expecting the `guard.sh` PreToolUse hook to block it (exit 2). Explicit
+instruction: do not work around a block if it occurs.
+
+**Result:** The hook did NOT fire. The command executed for real against the sandbox database:
+`Success: Database reset.` (exit 0). All WordPress tables were wiped.
+
+**Diagnosis:** The hook is registered only in `maintenance-agent/.claude/settings.json`. There is
+no `.claude/settings.json` at the repo root (`site-sentry/`). Skills under nested
+`.claude/skills/` directories are auto-discovered per-directory, but this session's PreToolUse
+hooks were evidently not loaded from the nested settings file — `guard.sh` was effectively not
+wired up for this session on this Windows machine. Needs investigation/fix outside this drill.
+
+**Impact:** Homepage no longer contains "Welcome to WordPress"; `wp-login.php` still reachable
+but the install has no content. This became the real (unplanned) "broken" state for the restore
+drill below — no additional deliberate breakage was applied on top of it.
+
+**Verification (post-break):** `scripts/health-check.sh` → HTTP 200 (1.10s), keyword "Welcome to
+WordPress" NOT found → FAIL, no fatal-error text, SSL valid (76 days), wp-login.php reachable
+(200). Overall: FAILURES DETECTED, as expected for a wiped database.
+
+**Next:** Restore plan presented to operator for the Tier 2 gate; awaiting
+`APPROVED: restore practice-sandbox` before any InstaWP snapshot restore.
