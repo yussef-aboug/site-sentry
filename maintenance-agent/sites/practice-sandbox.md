@@ -43,9 +43,16 @@ primary: InstaWP snapshots — the off-server restore point on this host (scp do
   take from the InstaWP dashboard, or `instawp versions create` if you install the InstaWP CLI).
   Verified restore point: `sitesentry-baseline-2026-07-21` (permanent as-found baseline, created
   2026-07-21 by operator via the InstaWP dashboard).
-secondary: WP Umbrella — NOT connected yet (corrected 2026-07-21; was listed as connected in
-  error). The `InitUmbrella` must-use plugin seen in `wp plugin list` is InstaWP's own platform
-  plugin, unrelated. Plus an on-server `wp db export` as a quick pre-change dump.
+secondary: WP Umbrella — CONNECTED and actively polling (corrected 2026-07-23; the 2026-07-21
+  "not connected" note was itself wrong). Confirmed via the WP Umbrella dashboard, which is the
+  authoritative source: site shows live data — Performance 100, Security 80/100, PHP Stable,
+  1 pending update. WP Umbrella does not store the connection as a site-side API-key option, so
+  a `wp option list` grep is not a reliable connection check — go by the dashboard. The
+  `InitUmbrella` must-use plugin is WP Umbrella's own auto-generated loader (its header reads
+  "Plugin Name: WP Umbrella", not an InstaWP-internal plugin as previously logged), and the
+  `wp_umbrella_transient_update_*` / `wp_umbrella_backup_version` options are its live update-poll
+  and backup-version caches — both consistent with an active connection. Plus an on-server
+  `wp db export` as a quick pre-change dump.
 # (restore-drill date is tracked under ## Service tracking below)
 
 ## Inventory notes
@@ -71,5 +78,6 @@ notes: Training site. Break it on purpose. If it dies permanently, spin up a new
   that itself is good practice. Baseline pass (2026-07-21): clean WP 7.0 install, PHP 8.3.27,
   checksums verify clean, no admin-named user. Gaps found and fixed 2026-07-21: set
   DISALLOW_FILE_EDIT, installed Wordfence + WP Rollback + UpdraftPlus + WP Super Cache,
-  patched wp-health 2.25.0→2.25.1. Still open: hide generator-tag version, point UpdraftPlus
-  at cloud storage, connect real WP Umbrella + UptimeRobot.
+  patched wp-health 2.25.0→2.25.1. WP Umbrella confirmed connected 2026-07-23 (dashboard
+  authoritative). Still open: hide generator-tag version, point UpdraftPlus at cloud storage,
+  set up UptimeRobot.
