@@ -57,9 +57,26 @@ Skills, by what they deliver:
 
 **Scheduling note:** the cycle is *operator-triggered* by design — production changes need
 your approval (Law 2), so nothing auto-updates a live site unattended. To put it on a rhythm,
-run `maintenance-cycle` on your own schedule (a weekly calendar reminder, a Windows Task that
-opens the session, or a Claude Code Routine), and it tells you what's due and walks you through
+run `maintenance-cycle` on your own schedule, and it tells you what's due and walks you through
 it. That keeps the cadence promise without ever removing the human gate on production.
+
+**Automating the weekly nudge (Windows).** `scripts/weekly-check.ps1` runs the roster
+read-only, drops a `SiteSentry-whats-due.txt` on your Desktop, and pops a reminder — it makes
+no changes. Register it as a weekly scheduled task once:
+
+```powershell
+# from maintenance-agent/
+powershell -ExecutionPolicy Bypass -File .\scripts\register-weekly-check.ps1
+# test it immediately:
+powershell -ExecutionPolicy Bypass -File .\scripts\weekly-check.ps1
+# change the day/time, or remove it:
+powershell -ExecutionPolicy Bypass -File .\scripts\register-weekly-check.ps1 -Day Tuesday -At 8:00AM
+powershell -ExecutionPolicy Bypass -File .\scripts\register-weekly-check.ps1 -Unregister
+```
+
+So detection is automatic (this nudge + WP Umbrella's 24/7 alerts); the *safe application* of
+updates stays a human-approved `maintenance-cycle` run. Requires Git for Windows (for the
+bash the roster runs in).
 
 ## Setup (one time, ~20 minutes)
 1. Install Claude Code (https://code.claude.com/docs) and sign in.
