@@ -140,3 +140,34 @@ WordPress" NOT found → FAIL, no fatal-error text, SSL valid (76 days), wp-logi
 
 **Next:** Restore plan presented to operator for the Tier 2 gate; awaiting
 `APPROVED: restore practice-sandbox` before any InstaWP snapshot restore.
+
+## 2026-07-22 — DB recovery from baseline export (Tier 1, sandbox)
+
+**What:** Operator explicitly requested recovery (Tier 1 sandbox, no gate needed since this is
+`environment: sandbox`, not production) after the guard-miss `wp db reset --yes` above. Preferred
+path: look for a baseline SQL export on the server and `wp db import` it; fall back to
+`wp core install` only if none existed.
+
+**Commands run:**
+- `find /tmp /home/nadijuwefo1951 -maxdepth 2 -iname "*practice-sandbox*.sql"` →
+  found `/tmp/practice-sandbox-2026-07-21.sql` (the same export taken during onboarding on
+  2026-07-21, 130,246 bytes) — still present on the host, so the `wp core install` fallback was
+  not needed.
+- `wp db import /tmp/practice-sandbox-2026-07-21.sql` → Success
+- `wp cache flush` → Success
+
+**Verification (Law 3):**
+- `wp option get siteurl` → `https://oddball-scarab-73427d.instawp.site` (correct, unchanged)
+- `wp user list` → `posayelobe3563` (administrator) — original account restored, no new
+  credentials needed
+- `wp theme list` → `twentytwentyfive` active, as before
+- `scripts/health-check.sh` → ALL CHECKS PASSED (200 OK, keyword "Welcome to WordPress" found,
+  no fatal-error text, SSL valid 75 days, wp-login reachable)
+
+**Rollback point:** InstaWP snapshot `sitesentry-baseline-2026-07-21` remains the off-server
+restore point of record, untouched by this recovery.
+
+**Plain-English summary:** The sandbox database was wiped during a deliberate guard test that
+didn't fire as expected; it's now fully recovered from the same baseline export taken at
+onboarding — same admin account, same theme, homepage loads normally. No new credentials were
+needed. The guard-hook scoping bug itself is still open and tracked separately.

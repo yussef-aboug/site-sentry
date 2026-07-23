@@ -59,7 +59,7 @@ last_security_scan: 2026-07-21
 last_link_check: [date]
 last_performance_check: [date]
 last_report: [YYYY-MM]
-last_restore_drill: [date]
+last_restore_drill: 2026-07-22
 last_quarterly_review: [date]
 edit_minutes_used_this_month: 0
 dev_hours_used_this_month: 0
