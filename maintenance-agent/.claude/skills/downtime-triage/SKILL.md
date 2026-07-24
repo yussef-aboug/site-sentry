@@ -14,6 +14,31 @@ Goal order: (1) get the site back up, (2) then find root cause. A site restored 
 while you investigate beats a site down while you theorize. Record every finding in the
 journal as you go — timestamps matter for the client-facing incident summary.
 
+## Autonomous after-hours mode — DIAGNOSE-ONLY (read this first when triggered automatically)
+
+When you are triggered **automatically** (not by the operator in a live session) — i.e. the
+night-watch poller fired during the after-hours window in `CADENCE.md` — you run in
+**DIAGNOSE-ONLY** mode. There is no human watching, so the rule is absolute:
+
+- **Strictly read-only (Tier 0). Make NO changes of any kind — not even Tier 1.** Do not
+  deactivate, rename, delete, restore, flush, or edit anything. Observation only.
+- Walk Steps 1–4 below (confirm it's really down, check the address / hosting / application
+  layers, read the actual error). In Step 5, identify the least-invasive fix you *would* apply
+  — but do **not** apply it.
+- Classify the fix for the operator: **auto-fixable later** (non-store site, reversible move
+  like disabling a fataling plugin) vs **needs a human** (store/e-commerce, a restore that
+  could lose data, DNS/payments/Tier 3, or suspected compromise).
+- Produce a tight **alert** and hand it to the notifier (`scripts/notify.sh`): site, time
+  detected, confirmed-down evidence (HTTP code + error text), most-likely root cause, the
+  one-line recommended fix, and the auto-fixable-vs-needs-human verdict. Log the same to
+  `logs/<slug>.md`.
+- **Suspected compromise → say so loudly** and stop; never investigate destructively.
+
+This mode's only output is a diagnosis + an alert. It never touches the site — so the worst
+case is the operator wakes to a precise "here's what's wrong and what I'd do," never to a
+site an unsupervised agent made worse. (Bounded *auto-fix* is a separate, later phase and is
+NOT enabled by this mode.)
+
 ## Step 1 — Confirm it's real (60 seconds)
 - `scripts/health-check.sh <url> "<homepage_keyword>"`
 - `curl -sI -L --max-time 20 <url>` from here, and check the uptime monitor's status.
