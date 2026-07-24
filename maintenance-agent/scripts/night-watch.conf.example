@@ -1,0 +1,22 @@
+# SiteSentry Night Watch — LOCAL config. Copy this file to:
+#     night-watch.local.conf
+# (that name is git-ignored, so your alert channel/topic never lands in the repo).
+#
+# Pick ONE alert channel:
+
+# --- ntfy.sh push (recommended: free, no account) ---
+# Choose an unguessable topic (it acts as your private channel = keep it secret),
+# then subscribe to the SAME topic in the free ntfy app on your phone.
+NOTIFY_NTFY_TOPIC=sitesentry-CHANGE-ME-to-something-random-9f3k2
+
+# --- or a generic webhook (Pushover proxy, Slack incoming webhook, etc.) ---
+# NOTIFY_WEBHOOK_URL=https://example.com/your-webhook
+
+# --- After-hours window (operator local time, 24h HH:MM). Outside it, the
+#     watcher does nothing (you're awake and handle alerts yourself). ---
+AFTER_HOURS_START=20:00
+AFTER_HOURS_END=08:00
+
+# Re-alert throttle: don't re-notify about the same ongoing outage more often
+# than this many minutes.
+REALERT_MINUTES=120
