@@ -78,6 +78,26 @@ So detection is automatic (this nudge + WP Umbrella's 24/7 alerts); the *safe ap
 updates stays a human-approved `maintenance-cycle` run. Requires Git for Windows (for the
 bash the roster runs in).
 
+**Night Watch — after-hours outage diagnose + alert (Phase 1).** `scripts/night-watch.sh`
+polls registered sites; during the after-hours window (`CADENCE.md` / `night-watch.local.conf`)
+a confirmed outage triggers a **read-only** diagnosis (cause + recommended fix, classified
+auto-fixable-later vs needs-human) and a push alert — it makes **no changes**. Set up:
+
+```powershell
+# 1. configure your alert channel (git-ignored; keep the topic private):
+copy scripts\night-watch.conf.example scripts\night-watch.local.conf   # then edit the ntfy topic
+# subscribe to that same topic in the free ntfy app on your phone
+# 2. test it now (ignores the time window):
+powershell -ExecutionPolicy Bypass -File .\scripts\night-watch.ps1 -Force
+# 3. schedule it every 5 min, 24/7 (acts only during the window):
+powershell -ExecutionPolicy Bypass -File .\scripts\register-night-watch.ps1
+```
+
+Prerequisites: the guard hook verified working (the only backstop when no human is watching —
+done), and a 24/7 runner (your PC awake overnight, or a cloud runner). It complements
+UptimeRobot/WP Umbrella's "it's down" alerts by adding the *diagnosis*. Bounded auto-*fix* is a
+deliberate later phase, not enabled here.
+
 ## Setup (one time, ~20 minutes)
 1. Install Claude Code (https://code.claude.com/docs) and sign in.
 2. Open the repo in Claude Code and run agent tasks from `maintenance-agent/`. The guard hook

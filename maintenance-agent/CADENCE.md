@@ -64,3 +64,18 @@ not a routine note.
    found on a lower tier is a pricing/scope flag for the operator.
 6. **When cadence and safety conflict, safety wins.** "Updates are due" never overrides "no
    verified backup" or "site is currently down." Fix health first, then service.
+
+## After-hours autonomous window (Night Watch)
+
+```
+after_hours_window:  20:00–08:00   # operator local time
+after_hours_mode:    diagnose-and-alert
+```
+
+During this window the `night-watch` poller checks registered sites and, on a confirmed
+outage, runs `downtime-triage` in its **DIAGNOSE-ONLY** mode (read-only) and alerts the
+operator with the cause + recommended fix. It makes **no changes** — bounded auto-fix is a
+separate, later phase and is not enabled here. Outside the window the operator is awake and
+handles alerts normally. Prerequisites: something must run the poller 24/7 (an always-on
+machine or cloud runner), and the guard hook must be verified working (it is the only safety
+backstop when no human is watching).
