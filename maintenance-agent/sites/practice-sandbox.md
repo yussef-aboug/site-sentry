@@ -9,7 +9,7 @@ wp_path: /home/nadijuwefo1951/web/oddball-scarab-73427d.instawp.site/public_html
 hosting: InstaWP (Sandbox $2/mo tier) — status: https://status.instawp.com
 dns_registrar: n/a (instawp.site subdomain)
 
-## Identity anchors — re-check before changes (baseline confirmed 2026-07-30 via SSH)
+## Identity anchors — re-check before changes (baseline confirmed 2026-07-29 local via SSH)
 # HARD anchors (mismatch = STOP — you may be on the wrong box / repointed alias):
 expected_home: https://oddball-scarab-73427d.instawp.site      # = `wp option get home`
 expected_siteurl: https://oddball-scarab-73427d.instawp.site   # = `wp option get siteurl`
