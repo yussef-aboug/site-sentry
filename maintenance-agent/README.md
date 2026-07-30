@@ -98,6 +98,15 @@ done), and a 24/7 runner (your PC awake overnight, or a cloud runner). It comple
 UptimeRobot/WP Umbrella's "it's down" alerts by adding the *diagnosis*. Bounded auto-*fix* is a
 deliberate later phase, not enabled here.
 
+## Onboarding a new client
+When you sign a client, follow **`CLIENT-ONBOARDING.md`** — the operator checklist that takes
+you from "signed" to "the agent is servicing the right site." It collects access securely
+(dedicated admin account + key-based SSH alias named for the slug), stands up monitoring, then
+hands off to the agent's `site-onboarding` skill, which **binds the site's identity** (proves
+the SSH alias lands on the correct box before touching anything) and only flips the site to
+`status: active` once it's fully set up. The registry's `status` + identity anchors are what
+guarantee the agent never acts on the wrong — or a half-configured — site.
+
 ## Setup (one time, ~20 minutes)
 1. Install Claude Code (https://code.claude.com/docs) and sign in.
 2. Open the repo in Claude Code and run agent tasks from `maintenance-agent/`. The guard hook

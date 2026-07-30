@@ -1,14 +1,38 @@
 # Site: [Business Name]
 
 <!-- Copy this file to sites/<slug>.md and fill it in during onboarding.
-     The agent may not touch any site that lacks a completed file here. -->
+     The agent may not touch any site that lacks a completed file here.
+     Slug rule: lowercase, hyphenated, derived from the business name, UNIQUE across sites/.
+     e.g. "Sunrise Bakery" -> sites/sunrise-bakery.md. The slug IS the site's identity
+     everywhere (logs/<slug>.md, roster, alerts) — pick it once, never reuse or recycle it. -->
 
+slug: clientname               # MUST equal this file's name without .md, and be unique
+status: onboarding             # onboarding | active | paused | offboarded  (see below)
 environment: production        # production | staging | sandbox  (controls autonomy tier)
-url: https://example.com
+url: https://example.com       # canonical public URL — the ONE address this site lives at
 ssh_alias: clientname          # Host alias in ~/.ssh/config (key auth; NO credentials here)
-wp_path: /var/www/html         # Directory containing wp-config.php on the server
+wp_path: /var/www/html         # Absolute directory containing wp-config.php on the server
 hosting: [Host name + link to their status page]
 dns_registrar: [Registrar]    # For expiry checks; agent never changes DNS (Tier 3)
+
+# status meaning (gates what the agent will do):
+#   onboarding — being taken into care; NO routine servicing yet, identity not yet bound.
+#   active     — fully onboarded, identity bound, monitored; normal cadence applies.
+#   paused     — retainer on hold; read-only only, no changes, excluded from roster "due".
+#   offboarded — no longer a client; agent must NOT connect or act. Kept for records only.
+
+## Identity anchors (bind the site to reality so the agent can't act on the wrong box)
+# Filled during onboarding stage "Bind identity" and re-checked before EVERY change.
+# HARD anchors — the strong proof you're on the right site. The live WordPress must report
+# ITSELF as this url. If home/siteurl stop matching, STOP: the alias may have been repointed,
+# or you're on the wrong box. Do not "fix" through a mismatch.
+expected_home: https://example.com     # must equal `wp option get home`   on the server
+expected_siteurl: https://example.com  # must equal `wp option get siteurl` on the server
+# SOFT anchors — corroborating signals, NOT hard stops. On shared/managed hosting the server
+# node hostname legitimately differs from the domain and can change when the host migrates the
+# site. A change here means CONFIRM a host migration with the operator, not auto-abort.
+server_hostname: [from `hostname -f`]  # the server node the alias currently lands on
+blog_id_check: [from `wp option get blogname`]  # human-readable sanity string
 
 ## Host quirks — connection notes (fill in during onboarding; agent READS this first)
 # Most standard hosts (cPanel, managed WordPress) need nothing here — plain `ssh <alias> "cmd"`
@@ -59,5 +83,5 @@ dev_hours_used_this_month: 0       # total-care only
 
 ## History
 journal: logs/[slug].md
-onboarded: [date]
+onboarded: [date]                  # date status flipped onboarding -> active
 notes: [Anything unusual: custom code, old PHP, past hacks, client quirks]
