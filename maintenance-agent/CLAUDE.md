@@ -70,6 +70,18 @@ changes **frequency, quantity, and priority** — never the safety discipline. R
 
 - `sites/` — one file per client site (copy `_TEMPLATE.md`). A site not registered here does
   not exist for you. Read its `## Host quirks` and `## Service tracking` sections first.
+  - **Know which site you're on.** When the operator names a site ("update the bakery"),
+    resolve it to exactly ONE `sites/<slug>.md`. If the name matches zero or more than one
+    file, ask which slug — never guess. The slug is the site's identity everywhere.
+  - **`status:` gates action.** Only `status: active` sites get routine servicing. `onboarding`
+    = still being set up (follow `site-onboarding`, no cadence work yet); `paused` = read-only
+    only; `offboarded` = do NOT connect or act. Treat a missing/`onboarding` status as "not
+    cleared for changes."
+  - **Verify identity before every change.** Before the first action in a session on a site —
+    and before any production change — confirm the live server still matches the file's
+    `## Identity anchors` (`wp option get home`/`siteurl` = `url`, `hostname -f` =
+    `server_hostname`). A mismatch means the alias may point at the wrong box or the site
+    moved: STOP and tell the operator. This is the guardrail against acting on the wrong site.
 - `logs/<site-slug>.md` — append-only change journal. Every action gets a dated entry:
   what/why/commands run/verification result/rollback point. Reports are built from these.
   After servicing a site, also refresh its `## Service tracking` dates so `roster.sh` is accurate.

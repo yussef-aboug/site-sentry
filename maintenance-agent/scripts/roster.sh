@@ -66,6 +66,13 @@ for f in "$SITES_DIR"/*.md; do
   base="$(basename "$f" .md)"
   [ "$base" = "_TEMPLATE" ] && continue
   [ -n "$FILTER" ] && [ "$base" != "$FILTER" ] && continue
+
+  # Status gate: offboarded/paused sites are not owed cadence work; leave them out of
+  # the "what's due" view (unless explicitly asked for by slug).
+  st="$(field "$f" status)"; st="${st%% *}"
+  if [ -z "$FILTER" ]; then
+    case "$st" in offboarded|paused) continue;; esac
+  fi
   any=1
 
   plan="$(field "$f" plan)"; plan="${plan%% *}"   # first token, e.g. "peace-of-mind"

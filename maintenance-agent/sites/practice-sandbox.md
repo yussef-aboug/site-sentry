@@ -1,11 +1,19 @@
 # Site: Practice Sandbox (InstaWP)
 
+slug: practice-sandbox
+status: active                 # internal training site — treated as active for drills
 environment: sandbox           # ← Tier 1: agent may make changes freely (snapshot first)
 url: https://oddball-scarab-73427d.instawp.site
 ssh_alias: sandbox             # Configured in ~/.ssh/config (key auth + RequestTTY force for InstaWP)
 wp_path: /home/nadijuwefo1951/web/oddball-scarab-73427d.instawp.site/public_html   # confirmed via SSH
 hosting: InstaWP (Sandbox $2/mo tier) — status: https://status.instawp.com
 dns_registrar: n/a (instawp.site subdomain)
+
+## Identity anchors (re-check before changes; mismatch = STOP, may be the wrong box)
+expected_home: https://oddball-scarab-73427d.instawp.site      # = `wp option get home`
+expected_siteurl: https://oddball-scarab-73427d.instawp.site   # = `wp option get siteurl`
+server_hostname: [confirm on next SSH via `hostname -f`]       # InstaWP host box
+blog_id_check: [confirm on next SSH via `wp option get blogname`]
 
 ## ⚠ Host quirks — READ before any SSH/WP-CLI on this host (InstaWP-specific, confirmed by testing)
 - **A PTY is required.** Plain `ssh sandbox "cmd"` (no TTY) HANGS after the command is
