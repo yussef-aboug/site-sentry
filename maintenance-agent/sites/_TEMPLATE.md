@@ -23,11 +23,15 @@ dns_registrar: [Registrar]    # For expiry checks; agent never changes DNS (Tier
 
 ## Identity anchors (bind the site to reality so the agent can't act on the wrong box)
 # Filled during onboarding stage "Bind identity" and re-checked before EVERY change.
-# If any live value stops matching what's recorded here, STOP — you may be on the wrong
-# server, the SSH alias may have been repointed, or DNS/hosting moved. Do not "fix" through it.
+# HARD anchors — the strong proof you're on the right site. The live WordPress must report
+# ITSELF as this url. If home/siteurl stop matching, STOP: the alias may have been repointed,
+# or you're on the wrong box. Do not "fix" through a mismatch.
 expected_home: https://example.com     # must equal `wp option get home`   on the server
 expected_siteurl: https://example.com  # must equal `wp option get siteurl` on the server
-server_hostname: [from `hostname -f`]  # the box the alias must land on
+# SOFT anchors — corroborating signals, NOT hard stops. On shared/managed hosting the server
+# node hostname legitimately differs from the domain and can change when the host migrates the
+# site. A change here means CONFIRM a host migration with the operator, not auto-abort.
+server_hostname: [from `hostname -f`]  # the server node the alias currently lands on
 blog_id_check: [from `wp option get blogname`]  # human-readable sanity string
 
 ## Host quirks — connection notes (fill in during onboarding; agent READS this first)

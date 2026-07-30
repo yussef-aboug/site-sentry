@@ -33,16 +33,18 @@ personal login) and SSH uses keys, set up by the operator — never credentials 
 ## 2. Bind identity — prove you're on the right site (do this BEFORE anything else touches it)
 This is the step that guarantees the agent only ever acts on the correct site. Connect via the
 `ssh_alias` and confirm the box you land on is genuinely this client's site:
-- `wp option get home` and `wp option get siteurl` → must match the site file's `url`.
-  Record them into `expected_home` / `expected_siteurl`.
-- `hostname -f` → record into `server_hostname`. `wp option get blogname` → `blog_id_check`.
+- **HARD anchors (the strong proof):** `wp option get home` and `wp option get siteurl` → must
+  match the site file's `url`. Record them into `expected_home` / `expected_siteurl`.
+- **SOFT anchors (corroborating, not hard stops):** `hostname -f` → `server_hostname`;
+  `wp option get blogname` → `blog_id_check`. On shared/managed hosting the server node name
+  differs from the domain and can change on a host migration — record it, but a later change is
+  a "confirm a migration with the operator" flag, not an abort.
 - Confirm `wp_path` actually contains `wp-config.php` (`test -f <wp_path>/wp-config.php`).
 - Public check: `scripts/health-check.sh <url>` reaches a live WordPress site at that URL.
-If the URL the server reports does NOT match the URL you were given, or the alias lands on a
-box already bound to a DIFFERENT slug, STOP and tell the operator — do not proceed. A wrong
-binding here is how an agent ends up editing the wrong client's site; catching it costs
-seconds, missing it can be catastrophic. Only once these anchors are written and matching may
-onboarding continue.
+If `home`/`siteurl` do NOT match the URL you were given, or the alias lands on a box already
+bound to a DIFFERENT slug, STOP and tell the operator — do not proceed. A wrong binding here is
+how an agent ends up editing the wrong client's site; catching it costs seconds, missing it can
+be catastrophic. Only once the hard anchors are written and matching may onboarding continue.
 
 ## 3. Baseline snapshot of reality (read-only)
 - Full backup FIRST (backup-restore skill) — the "as we found it" restore point, kept

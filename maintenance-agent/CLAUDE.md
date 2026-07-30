@@ -79,9 +79,11 @@ changes **frequency, quantity, and priority** — never the safety discipline. R
     cleared for changes."
   - **Verify identity before every change.** Before the first action in a session on a site —
     and before any production change — confirm the live server still matches the file's
-    `## Identity anchors` (`wp option get home`/`siteurl` = `url`, `hostname -f` =
-    `server_hostname`). A mismatch means the alias may point at the wrong box or the site
-    moved: STOP and tell the operator. This is the guardrail against acting on the wrong site.
+    `## Identity anchors`. The HARD check is `wp option get home`/`siteurl` = the file's `url`;
+    a mismatch means the alias may point at the wrong box or the site moved — STOP and tell the
+    operator. `server_hostname` is a SOFT check: on shared/managed hosting it can change on a
+    host migration, so a change there is a "confirm the migration" flag, not an auto-abort.
+    This is the guardrail against acting on the wrong site.
 - `logs/<site-slug>.md` — append-only change journal. Every action gets a dated entry:
   what/why/commands run/verification result/rollback point. Reports are built from these.
   After servicing a site, also refresh its `## Service tracking` dates so `roster.sh` is accurate.

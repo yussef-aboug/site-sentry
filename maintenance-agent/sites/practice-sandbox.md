@@ -9,11 +9,13 @@ wp_path: /home/nadijuwefo1951/web/oddball-scarab-73427d.instawp.site/public_html
 hosting: InstaWP (Sandbox $2/mo tier) — status: https://status.instawp.com
 dns_registrar: n/a (instawp.site subdomain)
 
-## Identity anchors (re-check before changes; mismatch = STOP, may be the wrong box)
+## Identity anchors — re-check before changes (baseline confirmed 2026-07-30 via SSH)
+# HARD anchors (mismatch = STOP — you may be on the wrong box / repointed alias):
 expected_home: https://oddball-scarab-73427d.instawp.site      # = `wp option get home`
 expected_siteurl: https://oddball-scarab-73427d.instawp.site   # = `wp option get siteurl`
-server_hostname: [confirm on next SSH via `hostname -f`]       # InstaWP host box
-blog_id_check: [confirm on next SSH via `wp option get blogname`]
+# SOFT anchors (a change means CONFIRM a host migration with the operator, not auto-STOP):
+server_hostname: productionus-20258705.iwpservers.com          # shared InstaWP node (`hostname -f`); can change if InstaWP migrates the site
+blog_id_check: oddball-scarab-73427d.instawp.site              # `wp option get blogname` sanity string
 
 ## ⚠ Host quirks — READ before any SSH/WP-CLI on this host (InstaWP-specific, confirmed by testing)
 - **A PTY is required.** Plain `ssh sandbox "cmd"` (no TTY) HANGS after the command is
