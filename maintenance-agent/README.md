@@ -42,6 +42,7 @@ Skills, by what they deliver:
 
 | Skill | Delivers | Tiers |
 |---|---|---|
+| `prospect-health-check` | Free audit for a LEAD (pre-sale), report + plan rec | sales |
 | `site-onboarding` | Take a new site into care | all |
 | `safe-update` | Security/software updates (non-stores) | all (monthly/weekly by tier) |
 | `backup-restore` | Backups, restores, monthly drill | all |
@@ -97,6 +98,21 @@ Prerequisites: the guard hook verified working (the only backstop when no human 
 done), and a 24/7 runner (your PC awake overnight, or a cloud runner). It complements
 UptimeRobot/WP Umbrella's "it's down" alerts by adding the *diagnosis*. Bounded auto-*fix* is a
 deliberate later phase, not enabled here.
+
+## Turning a landing-page lead into a client
+Every CTA on the landing page funnels into one form: the **free site health check**. When a
+submission arrives, run the `prospect-health-check` skill (or `scripts/prospect-scan.sh <url>`
+directly) — a **passive, read-only** public audit of the prospect's site: uptime, speed, SSL,
+exposed files, missing security headers, visible plugins, mobile/SEO basics. It produces
+findings the agent turns into a plain-English client report plus a plan recommendation.
+
+The scan **fails closed**: if it can't reach the site it aborts with exit 2 and performs no
+checks, rather than reporting reassuring passes it never verified. `Could not check …` means
+unknown, never "fine". It only ever runs against a site whose owner asked us to look, and never
+logs in, POSTs, or probes for vulnerabilities.
+
+Flow: form submission → `prospect-health-check` → report + recommendation (operator sends) →
+they say yes → `CLIENT-ONBOARDING.md` → `site-onboarding`.
 
 ## Onboarding a new client
 When you sign a client, follow **`CLIENT-ONBOARDING.md`** — the operator checklist that takes
