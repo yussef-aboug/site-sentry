@@ -391,8 +391,12 @@
       <p class="reveal" style="margin-bottom:26px">Send us your website address and we’ll reply with a <strong>free, no-obligation health check</strong> — including anything we find that needs attention.</p>
 
       <p class="plan-flag" id="plan-flag"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-shield-check"/></svg><span></span></p>
-      <form class="health-form reveal" id="health-form" action="https://formspree.io/f/YOUR-FORM-ID" method="POST">
+      <form class="health-form reveal" id="health-form" action="https://formspree.io/f/xpqvvpoj" method="POST">
         <input type="hidden" name="plan" id="plan-field" value="">
+        <!-- Honeypot: invisible to humans, irresistible to bots. Any submission with this
+             filled is spam. Formspree treats a field named _gotcha as exactly that and
+             silently discards it — no CAPTCHA friction for real visitors. -->
+        <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
         <div>
           <label for="hc-site">Your website address</label>
           <input id="hc-site" name="website" type="text" inputmode="url" autocomplete="url" placeholder="yourbusiness.com" required>

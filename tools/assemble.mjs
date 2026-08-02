@@ -25,8 +25,10 @@ const howTo = `<!--
   1. Replace every bracketed placeholder (dashed amber underline on the page):
      [Business Name], [1,495], [hello@yourbusiness.com], [Your Area],
      the two testimonial slots, and the trust-badge numbers.
-  2. WIRE THE FORM: search for "YOUR-FORM-ID" and paste your Formspree / Basin /
-     Netlify Forms endpoint, or swap the <form> for your provider's embed.
+  2. THE FORM IS WIRED to a Formspree endpoint (see the <form> action). Submissions
+     email whichever address that Formspree form is set to notify; a hidden _gotcha
+     honeypot silently discards bot spam. To change providers, edit the action in
+     src/markup.html and rebuild.
   3. PLAN BUTTONS scroll to the health-check form and pre-fill the plan name.
      Point them at payment or booking links whenever you're ready.
   4. Delete the "Template note" block in the Client stories section.

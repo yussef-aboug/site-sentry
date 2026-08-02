@@ -19,8 +19,10 @@
   1. Replace every bracketed placeholder (dashed amber underline on the page):
      [Business Name], [1,495], [hello@yourbusiness.com], [Your Area],
      the two testimonial slots, and the trust-badge numbers.
-  2. WIRE THE FORM: search for "YOUR-FORM-ID" and paste your Formspree / Basin /
-     Netlify Forms endpoint, or swap the <form> for your provider's embed.
+  2. THE FORM IS WIRED to a Formspree endpoint (see the <form> action). Submissions
+     email whichever address that Formspree form is set to notify; a hidden _gotcha
+     honeypot silently discards bot spam. To change providers, edit the action in
+     src/markup.html and rebuild.
   3. PLAN BUTTONS scroll to the health-check form and pre-fill the plan name.
      Point them at payment or booking links whenever you're ready.
   4. Delete the "Template note" block in the Client stories section.
@@ -918,8 +920,12 @@ a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visibl
       <p class="reveal" style="margin-bottom:26px">Send us your website address and we’ll reply with a <strong>free, no-obligation health check</strong> — including anything we find that needs attention.</p>
 
       <p class="plan-flag" id="plan-flag"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-shield-check"/></svg><span></span></p>
-      <form class="health-form reveal" id="health-form" action="https://formspree.io/f/YOUR-FORM-ID" method="POST">
+      <form class="health-form reveal" id="health-form" action="https://formspree.io/f/xpqvvpoj" method="POST">
         <input type="hidden" name="plan" id="plan-field" value="">
+        <!-- Honeypot: invisible to humans, irresistible to bots. Any submission with this
+             filled is spam. Formspree treats a field named _gotcha as exactly that and
+             silently discards it — no CAPTCHA friction for real visitors. -->
+        <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
         <div>
           <label for="hc-site">Your website address</label>
           <input id="hc-site" name="website" type="text" inputmode="url" autocomplete="url" placeholder="yourbusiness.com" required>
