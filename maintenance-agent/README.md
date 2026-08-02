@@ -111,6 +111,17 @@ checks, rather than reporting reassuring passes it never verified. `Could not ch
 unknown, never "fine". It only ever runs against a site whose owner asked us to look, and never
 logs in, POSTs, or probes for vulnerabilities.
 
+**On Windows, run it from PowerShell** — PowerShell has no `bash`, so use the wrapper (it
+finds Git Bash for you, and can build the report in the same command):
+
+```powershell
+# from maintenance-agent/
+powershell -ExecutionPolicy Bypass -File .\scripts\prospect-check.ps1 -Site example.com
+# scan + build the client report in one go:
+.\scripts\prospect-check.ps1 -Site example.com -Report -Business "Sunrise Bakery" -Name "Sarah" `
+    -Plan "Peace of Mind" -Why "..." -Concern "it went down last month"
+```
+
 `scripts/make-report.mjs` then turns those findings into a **client-ready HTML report** —
 branded, printable to PDF, self-contained. It refuses to build from an aborted scan for the
 same reason the scanner refuses to report one. Generated reports land in `reports/`
