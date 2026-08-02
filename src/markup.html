@@ -398,12 +398,28 @@
              silently discards it — no CAPTCHA friction for real visitors. -->
         <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
         <div>
+          <label for="hc-name">Your name</label>
+          <input id="hc-name" name="name" type="text" autocomplete="given-name" placeholder="Sarah" required>
+        </div>
+        <div>
           <label for="hc-site">Your website address</label>
-          <input id="hc-site" name="website" type="text" inputmode="url" autocomplete="url" placeholder="yourbusiness.com" required>
+          <!-- Deliberately type="text", not type="url": type="url" demands a full
+               "https://" prefix and rejects "yourbusiness.com", which is what people
+               actually type. The pattern instead requires a dot and forbids "@", so an
+               email address (the most common wrong answer) can't be submitted here. -->
+          <input id="hc-site" name="website" type="text" inputmode="url" autocomplete="url"
+                 placeholder="yourbusiness.com" required
+                 pattern="[^@\s]+\.[^@\s]{2,}"
+                 title="Enter your website address, like yourbusiness.com — not an email address.">
         </div>
         <div>
           <label for="hc-email">Your email</label>
           <input id="hc-email" name="email" type="email" autocomplete="email" placeholder="you@business.com" required>
+        </div>
+        <div>
+          <label for="hc-note">Anything worrying you? <span class="opt">(optional)</span></label>
+          <textarea id="hc-note" name="concern" rows="2" maxlength="600"
+                    placeholder="Slow, went down last month, not sure it's backed up…"></textarea>
         </div>
         <button class="btn btn-primary" type="submit">Get My Free Site Health Check</button>
         <p class="form-msg" id="form-msg" role="status"></p>
