@@ -5,8 +5,11 @@
 #
 #   # ...and build the client-ready report in one go:
 #   .\scripts\prospect-check.ps1 -Site example.com -Report `
-#       -Business "Sunrise Bakery" -Name "Sarah" -Plan "Peace of Mind — $229/mo" `
-#       -Why "..." -Concern "it went down last month"
+#       -Business 'Sunrise Bakery' -Name 'Sarah' -Plan 'Peace of Mind - $229/mo' `
+#       -Why '...' -Concern 'it went down last month'
+#
+# NOTE: use SINGLE quotes for any value containing '$'. In double quotes PowerShell
+# expands $229 as a variable and silently drops the price.
 #
 # Read-only. Runs only ordinary public requests; makes no changes to the site.
 # Only run this against a site whose owner asked you to look.

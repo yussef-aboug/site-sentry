@@ -118,8 +118,10 @@ finds Git Bash for you, and can build the report in the same command):
 # from maintenance-agent/
 powershell -ExecutionPolicy Bypass -File .\scripts\prospect-check.ps1 -Site example.com
 # scan + build the client report in one go:
-.\scripts\prospect-check.ps1 -Site example.com -Report -Business "Sunrise Bakery" -Name "Sarah" `
-    -Plan "Peace of Mind" -Why "..." -Concern "it went down last month"
+.\scripts\prospect-check.ps1 -Site example.com -Report -Business 'Sunrise Bakery' -Name 'Sarah' `
+    -Plan 'Peace of Mind - $229/mo' -Why '...' -Concern 'it went down last month'
+# Use SINGLE quotes for anything containing $ — in double quotes PowerShell expands
+# $229 as a variable and the price silently vanishes.
 ```
 
 `scripts/make-report.mjs` then turns those findings into a **client-ready HTML report** —
