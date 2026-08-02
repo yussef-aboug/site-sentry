@@ -87,6 +87,27 @@ Audience: a business owner, not a developer. Rules:
 - Structure: *What's working well* → *What needs attention now* (the FAILs) → *What we'd
   improve* (the WARNs) → *What we couldn't see from outside* → *Recommended plan*.
 
+## 3b. Build the report document
+```bash
+bash scripts/prospect-scan.sh <url> > /tmp/scan.txt
+node scripts/make-report.mjs --scan /tmp/scan.txt \
+  --site <url> --business "<Business>" --name "<First name>" \
+  --concern "<their words, if they gave any>" \
+  --plan "<recommended plan>" --why "<one honest paragraph>" \
+  --out reports/<slug>.html
+```
+This produces a single self-contained HTML file — branded, printable to PDF, no
+external requests. It refuses to build from an aborted scan for the same reason the
+scanner refuses to report one.
+
+The generator's default wording comes straight from the scan. **Reword before sending
+whenever the raw line is too technical or too alarming** — write your improved copy to a
+JSON file and pass `--findings`:
+```json
+{"urgent":["..."],"advised":["..."],"good":["..."],"unknown":["..."]}
+```
+Keep the structure, improve the English. Never add a finding the scan didn't produce.
+
 ## 4. Recommend a plan (see CADENCE.md for what each includes)
 Recommend by fit, not by price:
 - **Store detected (WooCommerce/commerce plugin in the source) → Total Care, always.** Stores
@@ -99,10 +120,26 @@ Recommend by fit, not by price:
 State one clear recommendation with one sentence of why. Offer the alternative, don't list all
 three neutrally — that pushes the decision back onto them.
 
-## 5. Draft the follow-up email (operator sends — never you)
-Short: thank them, 2–3 headline findings, the recommendation, one clear next step (a call, or
-"reply yes and we'll start"). Attach or inline the full report. No attachments they must open to
-see the point. Draft it; the operator reviews and sends (Tier 3 — you never email clients).
+## 5. STOP — operator approval gate (nothing reaches the prospect without it)
+This is a hard gate, not a formality. Present to the operator, in chat:
+1. the finding counts (urgent / recommended / working well),
+2. every **urgent** finding in full — those are the claims that damage your credibility
+   most if wrong,
+3. the recommended plan and the one-line reason,
+4. the path to the generated report file, and
+5. the drafted email (below).
+
+Then **wait** for the operator to reply `APPROVED: send <slug>`. Until that message
+arrives: do not email, do not upload the report anywhere public, do not share a link.
+If the operator asks for changes, revise and present again — a second approval is
+required, the first does not carry over.
+
+You never send client email under any circumstances (Tier 3). Even with approval, the
+operator does the sending; approval authorises the *draft*, not an action by you.
+
+**Draft the email:** short — greet them by name, 2–3 headline findings in plain words, the
+recommendation, one clear next step (a short call, or "reply yes and we'll start"). The
+report is the detail; the email is the reason to read it.
 
 ## 6. Log the lead
 Append to `logs/_leads.md` (create it if absent) — one dated block per lead: name, URL, email,

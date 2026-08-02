@@ -111,8 +111,18 @@ checks, rather than reporting reassuring passes it never verified. `Could not ch
 unknown, never "fine". It only ever runs against a site whose owner asked us to look, and never
 logs in, POSTs, or probes for vulnerabilities.
 
-Flow: form submission → `prospect-health-check` → report + recommendation (operator sends) →
-they say yes → `CLIENT-ONBOARDING.md` → `site-onboarding`.
+`scripts/make-report.mjs` then turns those findings into a **client-ready HTML report** —
+branded, printable to PDF, self-contained. It refuses to build from an aborted scan for the
+same reason the scanner refuses to report one. Generated reports land in `reports/`
+(git-ignored — they contain prospect details).
+
+**Nothing reaches a prospect without you.** The skill stops at an approval gate: it shows you
+the counts, every urgent finding, the recommendation, the report path, and the drafted email,
+then waits for `APPROVED: send <slug>`. Even then you do the sending — the agent never emails
+clients (Tier 3).
+
+Flow: form submission → `prospect-health-check` → scan → report → **your approval** →
+you send → they say yes → `CLIENT-ONBOARDING.md` → `site-onboarding`.
 
 ## Onboarding a new client
 When you sign a client, follow **`CLIENT-ONBOARDING.md`** — the operator checklist that takes
