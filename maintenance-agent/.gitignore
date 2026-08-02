@@ -1,3 +1,4 @@
 backups-local/
 scripts/night-watch.local.conf
 logs/.night-watch/
+reports/
