@@ -25,6 +25,19 @@ guessing, POSTing to forms, port scanning, vulnerability exploitation, admin-are
 scanning any host other than the one submitted. If a finding suggests a live vulnerability,
 that is something to *report to the owner*, never something to test further.
 
+## 0. Read the lead
+A form submission carries four things: `name`, `website`, `email`, and `plan` (which plan
+button they clicked before converting), plus an optional `concern` — their own words about
+what's worrying them. Use all of them:
+- **`concern` sets the agenda.** If they said "it went down last month", that fear is the
+  headline of your report and the first thing you address — even if the scan surfaces something
+  technically worse. Answer the question they actually asked, then add what you found.
+- **`plan`** tells you what they were already considering. If your recommendation differs from
+  the button they clicked, say why in one sentence — especially if you're recommending
+  something cheaper, which builds more trust than any upsell.
+- **`name`** is how you address them. Never "Hello there".
+If `concern` is empty, that's fine — it's optional. Don't invent one.
+
 ## 1. Run the scan
 ```bash
 scripts/prospect-scan.sh <url>
@@ -92,9 +105,9 @@ Short: thank them, 2–3 headline findings, the recommendation, one clear next s
 see the point. Draft it; the operator reviews and sends (Tier 3 — you never email clients).
 
 ## 6. Log the lead
-Append to `logs/_leads.md` (create it if absent) — one dated block per lead: URL, plan they
-clicked on the form (the hidden `plan` field), scan summary counts, recommendation, and status
-(`new` → `report-sent` → `won`/`lost`/`no-reply`). This is your follow-up list; leads die from
+Append to `logs/_leads.md` (create it if absent) — one dated block per lead: name, URL, email,
+the plan they clicked, their stated `concern` (verbatim — it's the best sales note you'll get),
+scan summary counts, recommendation, and status (`new` → `report-sent` → `won`/`lost`/`no-reply`). This is your follow-up list; leads die from
 silence more than from objections.
 
 ## 7. If they say yes
