@@ -38,7 +38,23 @@ const planWhy  = args.why || '';
 const concern  = args.concern || '';
 const brand    = args.brand || 'SiteSentry';
 
-const scan = fs.readFileSync(scanPath, 'utf8');
+/* Read the scan, tolerating UTF-16 as well as UTF-8. Windows tooling (PowerShell
+   redirection, Tee-Object, Out-File) writes UTF-16LE by default; read as UTF-8 that
+   is null-separated gibberish and every finding silently fails to match. */
+function readScan(p) {
+  const buf = fs.readFileSync(p);
+  if (buf.length >= 2 && buf[0] === 0xFF && buf[1] === 0xFE) return buf.toString('utf16le').slice(1);
+  if (buf.length >= 2 && buf[0] === 0xFE && buf[1] === 0xFF) { // UTF-16BE: swap then decode
+    const s = Buffer.from(buf); for (let i = 0; i + 1 < s.length; i += 2) { const t = s[i]; s[i] = s[i + 1]; s[i + 1] = t; }
+    return s.toString('utf16le').slice(1);
+  }
+  // No BOM but heavily null-padded => UTF-16LE written without a BOM.
+  let nulls = 0; const n = Math.min(buf.length, 512);
+  for (let i = 0; i < n; i++) if (buf[i] === 0) nulls++;
+  if (n > 0 && nulls / n > 0.25) return buf.toString('utf16le');
+  return buf.toString('utf8').replace(/^﻿/, '');
+}
+const scan = readScan(scanPath);
 
 /* ------------------------------------------------------------- refuse ----- */
 // Fail closed, exactly like the scanner. A report built from a scan that never
@@ -70,6 +86,24 @@ for (const raw of scan.split('\n')) {
 if (args.findings) {
   const o = JSON.parse(fs.readFileSync(args.findings, 'utf8'));
   for (const k of ['urgent', 'advised', 'good', 'unknown']) if (Array.isArray(o[k])) findings[k] = o[k];
+}
+
+/* Parsed nothing out of a scan that clearly ran? Then the parse failed — an encoding
+   mismatch, a truncated file, a changed output format. Refuse. An empty report is not
+   an honest "we found nothing"; it's a confident document backed by a broken pipeline,
+   and it reads to the client as "your site is perfect". Fail loudly instead. */
+const parsedTotal = findings.urgent.length + findings.advised.length + findings.good.length;
+if (parsedTotal === 0 && !args.findings) {
+  const looksLikeScan = /SiteSentry free health check|SUMMARY:/.test(scan);
+  console.error('REFUSING to build a report: parsed 0 findings from the scan.');
+  if (looksLikeScan) {
+    console.error('The scan file has content but no [PASS]/[WARN]/[FAIL] lines could be read —');
+    console.error('most likely a text-encoding mismatch (UTF-16 vs UTF-8) or a truncated file.');
+  } else {
+    console.error(`"${scanPath}" does not look like prospect-scan.sh output at all.`);
+  }
+  console.error('An empty report would tell the client their site is flawless. Not shipping that.');
+  process.exit(3);
 }
 
 /* --------------------------------------------------------------- copy ----- */
