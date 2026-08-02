@@ -44,8 +44,16 @@ $slug    = ($Site -replace '^https?://','' -replace '[^a-zA-Z0-9]+','-').Trim('-
 $scanOut = Join-Path $env:TEMP "sitesentry-scan-$slug.txt"
 
 Write-Host "Scanning $Site (read-only, public requests only)..." -ForegroundColor Cyan
-& $bash -lc "cd '$agentUnix' && ./scripts/prospect-scan.sh '$Site'" 2>&1 | Tee-Object -FilePath $scanOut
-$scanExit = $LASTEXITCODE
+
+# Capture, then write UTF-8 ourselves. Windows PowerShell 5.1's Tee-Object has no
+# -Encoding parameter and writes UTF-16LE, which the report parser reads as
+# null-separated bytes -- every finding silently fails to match and the report
+# comes out empty. Write plain UTF-8 (no BOM) so the parser sees real text.
+$scanLines = & $bash -lc "cd '$agentUnix' && ./scripts/prospect-scan.sh '$Site'" 2>&1
+$scanExit  = $LASTEXITCODE
+$scanText  = ($scanLines | Out-String)
+Write-Host $scanText
+[System.IO.File]::WriteAllText($scanOut, $scanText, (New-Object System.Text.UTF8Encoding $false))
 
 if ($scanExit -eq 2) {
   Write-Host ""
