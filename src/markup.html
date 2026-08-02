@@ -31,7 +31,10 @@
       <a href="#builds">New websites</a>
       <a href="#faq">FAQ</a>
     </nav>
-    <a class="btn btn-primary btn-sm" href="#plans">Protect My Website</a>
+    <div class="nav-cta">
+      <a class="btn btn-check btn-sm" href="#health-check">Free Health Check</a>
+      <a class="btn btn-primary btn-sm" href="#plans">Protect My Website</a>
+    </div>
   </div>
 </header>
 
@@ -193,7 +196,7 @@
             <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span><strong>Malware and security scanning</strong> — silent threats get caught early, before they become visible problems.</span></li>
             <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span><strong>Monthly plain-English report</strong> — see exactly what was done, in language that doesn’t require an IT degree.</span></li>
           </ul>
-          <a class="btn btn-outline" href="#health-check" data-plan="Essentials — $129/mo">Choose Essentials</a>
+          <a class="btn btn-outline" href="#start" data-plan="Essentials — $129/mo">Choose Essentials</a>
           <p class="best-for">Best for: simple sites that mostly serve as an online business card.</p>
         </article>
 
@@ -211,7 +214,7 @@
             <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span><strong>Broken link and error checks</strong> — the small problems that quietly make customers lose trust get found and fixed.</span></li>
             <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span><strong>Performance monitoring</strong> — we watch your site’s speed, because slow sites lose visitors and Google rankings.</span></li>
           </ul>
-          <a class="btn btn-primary" href="#health-check" data-plan="Peace of Mind — $229/mo">Choose Peace of Mind</a>
+          <a class="btn btn-primary" href="#start" data-plan="Peace of Mind — $229/mo">Choose Peace of Mind</a>
           <p class="best-for">Best for: businesses whose website actually brings in customers. <em>(Most of our clients choose this plan.)</em></p>
         </article>
 
@@ -228,7 +231,7 @@
             <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span><strong>Quarterly strategy check-in</strong> — a short call to review what’s working and what your site should do next.</span></li>
             <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span><strong>Required for online stores</strong> — e-commerce sites have more moving parts and higher stakes, and they get the highest level of care. Pricing for stores is quoted based on complexity, because a shop processing daily orders deserves more attention than a brochure site — and gets it.</span></li>
           </ul>
-          <a class="btn btn-outline" href="#health-check" data-plan="Total Care — from $399/mo">Get a Total Care Quote</a>
+          <a class="btn btn-outline" href="#start" data-plan="Total Care — from $399/mo">Get a Total Care Quote</a>
           <p class="best-for">Best for: online stores and businesses where the website is the storefront.</p>
         </article>
       </div>
@@ -269,6 +272,63 @@
     </div>
   </section>
 
+  <!-- ============ SECTION 4b — START A PLAN (purchase intent) ============
+       Separate from the free health check on purpose. Someone clicking "Choose
+       Peace of Mind" has already decided; sending them to a "not sure which plan
+       fits?" audit form talks them back out of it. This form is the yes path. -->
+  <section id="start" class="band band-night start-band">
+    <div class="wrap">
+      <p class="eyebrow reveal">Start today</p>
+      <h2 class="reveal">Let’s get your website protected.</h2>
+      <p class="reveal start-lede">Tell us where to find your site and we’ll send your welcome pack — a short agreement, your first invoice, and the details we need to take over. <strong>No payment on this page</strong>, and nothing happens to your site until you say go.</p>
+
+      <p class="plan-flag" id="start-flag"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-shield-check"/></svg><span></span></p>
+
+      <form class="health-form reveal" id="start-form" action="https://formspree.io/f/xpqvvpoj" method="POST">
+        <!-- _subject makes plan signups instantly distinguishable from audit
+             requests in the inbox; script.js rewrites it with the chosen plan. -->
+        <input type="hidden" name="_subject" id="start-subject" value="PLAN SIGNUP — from the website">
+        <input type="hidden" name="intent" value="Plan signup">
+        <input type="hidden" name="plan" id="start-plan-field" value="">
+        <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+        <div>
+          <label for="st-plan">Which plan</label>
+          <select id="st-plan" name="plan_choice" required>
+            <option value="" disabled selected>Choose a plan…</option>
+            <option value="Essentials — $129/mo">Essentials — $129/mo</option>
+            <option value="Peace of Mind — $229/mo">Peace of Mind — $229/mo</option>
+            <option value="Total Care — from $399/mo">Total Care — from $399/mo (quote)</option>
+            <option value="Not sure yet">Not sure yet — advise me</option>
+          </select>
+        </div>
+        <div>
+          <label for="st-name">Your name</label>
+          <input id="st-name" name="name" type="text" autocomplete="name" placeholder="Sarah Whitfield" required>
+        </div>
+        <div>
+          <label for="st-site">Your website address</label>
+          <input id="st-site" name="website" type="text" inputmode="url" autocomplete="url"
+                 placeholder="yourbusiness.com" required
+                 pattern="[^@\s]+\.[^@\s]{2,}"
+                 title="Enter your website address, like yourbusiness.com — not an email address.">
+        </div>
+        <div>
+          <label for="st-email">Your email</label>
+          <input id="st-email" name="email" type="email" autocomplete="email" placeholder="you@business.com" required>
+        </div>
+        <div>
+          <label for="st-note">Anything we should know? <span class="opt">(optional)</span></label>
+          <textarea id="st-note" name="notes" rows="2" maxlength="600" placeholder="Who built it, who hosts it, anything broken right now…"></textarea>
+        </div>
+        <button class="btn btn-primary" type="submit">Get My Welcome Pack</button>
+        <p class="form-msg" id="start-msg" role="status"></p>
+        <p class="form-note">We reply the same business day. No contracts — cancel anytime.</p>
+      </form>
+
+      <p class="start-alt reveal">Not ready to commit? <a href="#health-check">Get a free health check first →</a></p>
+    </div>
+  </section>
+
   <!-- ============ SECTION 5 — NEW WEBSITE BUILDS ============ -->
   <section id="builds" class="band band-tint builds">
     <div class="wrap">
@@ -294,7 +354,7 @@
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span><strong>3 months of Peace of Mind care</strong> — updates, backups, monitoring, and up to an hour of changes each month while your site finds its footing</span></li>
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span>After 3 months, your plan simply continues at the regular rate — <strong>or cancel with one email.</strong> Almost nobody does, because by then you’ll know what it feels like to never worry about your website.</span></li>
         </ul>
-        <a class="btn btn-primary" href="#health-check" data-plan="New website build">Get a Website Quote</a>
+        <a class="btn btn-primary" href="#start" data-plan="New website build">Get a Website Quote</a>
         <p class="rescue">Already have a website that just needs rescuing? We take over existing sites — <a href="#plans">see the plans above</a>, or <a href="#health-check">start with a free health check</a>.</p>
       </aside>
     </div>
@@ -388,10 +448,12 @@
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-arrow"/></svg></a>
 
       <div class="or-divider reveal" id="health-check">Not sure which plan fits?</div>
-      <p class="reveal" style="margin-bottom:26px">Send us your website address and we’ll reply with a <strong>free, no-obligation health check</strong> — including anything we find that needs attention.</p>
+      <p class="reveal" style="margin-bottom:26px">Send us your website address and we’ll reply with a <strong>free, no-obligation health check</strong> — what’s working, what needs attention, and which plan we’d honestly recommend. No commitment, and we’ll tell you if you don’t need us.</p>
 
       <p class="plan-flag" id="plan-flag"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-shield-check"/></svg><span></span></p>
       <form class="health-form reveal" id="health-form" action="https://formspree.io/f/xpqvvpoj" method="POST">
+        <input type="hidden" name="_subject" value="Free health check request">
+        <input type="hidden" name="intent" value="Free health check">
         <input type="hidden" name="plan" id="plan-field" value="">
         <!-- Honeypot: invisible to humans, irresistible to bots. Any submission with this
              filled is spam. Formspree treats a field named _gotcha as exactly that and

@@ -65,7 +65,13 @@ button, input { font: inherit; color: inherit; }
   --ink:        #1D2534;
   --mute:       #5A6373;
 
-  /* the lamp (sole brand accent) */
+  /* the mint — the ONLY other accent, reserved for the free/no-risk offer so it
+     can never be confused with an amber "buy" action */
+  --mint:        #58C9A8;
+  --mint-bright: #74DEBF;
+  --mint-text:   #06231C;
+
+  /* the lamp (primary brand accent — every paid action) */
   --lamp:        #E8A63C;
   --lamp-bright: #F6C468;
   --lamp-text:   #201703;   /* ink used on amber buttons */
@@ -153,6 +159,11 @@ em { font-style: italic; }
 .btn-primary:hover { background: var(--lamp-bright); }
 .btn-outline { border-color: color-mix(in srgb, var(--fg) 26%, transparent); color: var(--fg); background: transparent; }
 .btn-outline:hover { border-color: var(--lamp); color: inherit; }
+/* The free-offer CTA. A deliberate SECOND accent — the page's amber all means
+   "buy"; this cool mint reads as "no-risk, free", so the two asks in the header
+   can't be mistaken for each other. Used only for the health-check CTA. */
+.btn-check { background: var(--mint); color: var(--mint-text); box-shadow: 0 10px 26px -12px rgba(88, 201, 168, 0.5); }
+.btn-check:hover { background: var(--mint-bright); }
 .btn-lg { padding: 18px 34px; font-size: 1.08rem; }
 .btn-sm { padding: 10px 18px; font-size: 0.92rem; }
 
@@ -181,10 +192,15 @@ a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visibl
 .nav-links { display: flex; gap: 26px; margin-left: auto; }
 .nav-links a { color: var(--night-mute); text-decoration: none; font-size: 0.92rem; font-weight: 500; }
 .nav-links a:hover { color: var(--night-ink); }
-.top-nav .btn { margin-left: 8px; }
+.nav-cta { display: flex; align-items: center; gap: 10px; margin-left: 8px; }
 @media (max-width: 860px) {
   .nav-links { display: none; }
-  .top-nav .btn { margin-left: auto; }
+  .nav-cta { margin-left: auto; }
+}
+/* Below ~560px two buttons crowd the bar; the free offer is the better survivor —
+   it's the lower-commitment ask, and the plans are one scroll away regardless. */
+@media (max-width: 560px) {
+  .nav-cta .btn-primary { display: none; }
 }
 
 /* ---------------- hero ---------------- */
@@ -511,6 +527,27 @@ a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visibl
 .form-note { font-size: 0.85rem; color: var(--night-mute); text-align: center; }
 .form-msg { display: none; border: 1px solid color-mix(in srgb, var(--lamp) 50%, transparent); background: color-mix(in srgb, var(--lamp) 12%, transparent); color: var(--lamp-bright); border-radius: 12px; padding: 13px 16px; font-size: 0.9rem; }
 .form-msg.show { display: block; }
+/* ---------------- start-a-plan section (purchase intent) ---------------- */
+.start-band { text-align: center; }
+.start-band h2 { margin-bottom: 14px; }
+.start-lede { max-width: 620px; margin: 0 auto 30px; color: var(--night-mute); }
+.start-lede strong { color: var(--night-ink); }
+.start-alt { margin-top: 22px; font-size: 0.92rem; color: var(--night-mute); }
+.start-alt a { color: var(--mint); text-decoration: none; font-weight: 600; }
+.start-alt a:hover { color: var(--mint-bright); }
+.health-form select {
+  width: 100%; padding: 15px 18px; border-radius: 12px;
+  border: 1.5px solid rgba(233, 236, 244, 0.18); background: rgba(233, 236, 244, 0.06);
+  color: var(--night-ink); font-size: 1rem; font-family: inherit;
+  appearance: none; -webkit-appearance: none;
+  /* inline chevron: keeps the "zero external requests" promise intact */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2397A2B6' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 9l7 7 7-7'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 18px center;
+  padding-right: 46px;
+}
+.health-form select:focus { border-color: var(--lamp); outline: none; }
+.health-form select option { background: var(--night-card); color: var(--night-ink); }
+
 .plan-flag { display: none; margin-inline: auto; margin-bottom: 4px; }
 .plan-flag.show { display: inline-flex; align-items: center; gap: 8px; background: rgba(233, 236, 244, 0.08); border: 1px solid var(--night-line); color: var(--night-ink); border-radius: 999px; padding: 7px 15px; font-size: 0.85rem; }
 
@@ -568,7 +605,10 @@ a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visibl
       <a href="#builds">New websites</a>
       <a href="#faq">FAQ</a>
     </nav>
-    <a class="btn btn-primary btn-sm" href="#plans">Protect My Website</a>
+    <div class="nav-cta">
+      <a class="btn btn-check btn-sm" href="#health-check">Free Health Check</a>
+      <a class="btn btn-primary btn-sm" href="#plans">Protect My Website</a>
+    </div>
   </div>
 </header>
 
@@ -730,7 +770,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visibl
             <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span><strong>Malware and security scanning</strong> — silent threats get caught early, before they become visible problems.</span></li>
             <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span><strong>Monthly plain-English report</strong> — see exactly what was done, in language that doesn’t require an IT degree.</span></li>
           </ul>
-          <a class="btn btn-outline" href="#health-check" data-plan="Essentials — $129/mo">Choose Essentials</a>
+          <a class="btn btn-outline" href="#start" data-plan="Essentials — $129/mo">Choose Essentials</a>
           <p class="best-for">Best for: simple sites that mostly serve as an online business card.</p>
         </article>
 
@@ -748,7 +788,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visibl
             <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span><strong>Broken link and error checks</strong> — the small problems that quietly make customers lose trust get found and fixed.</span></li>
             <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span><strong>Performance monitoring</strong> — we watch your site’s speed, because slow sites lose visitors and Google rankings.</span></li>
           </ul>
-          <a class="btn btn-primary" href="#health-check" data-plan="Peace of Mind — $229/mo">Choose Peace of Mind</a>
+          <a class="btn btn-primary" href="#start" data-plan="Peace of Mind — $229/mo">Choose Peace of Mind</a>
           <p class="best-for">Best for: businesses whose website actually brings in customers. <em>(Most of our clients choose this plan.)</em></p>
         </article>
 
@@ -765,7 +805,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visibl
             <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span><strong>Quarterly strategy check-in</strong> — a short call to review what’s working and what your site should do next.</span></li>
             <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span><strong>Required for online stores</strong> — e-commerce sites have more moving parts and higher stakes, and they get the highest level of care. Pricing for stores is quoted based on complexity, because a shop processing daily orders deserves more attention than a brochure site — and gets it.</span></li>
           </ul>
-          <a class="btn btn-outline" href="#health-check" data-plan="Total Care — from $399/mo">Get a Total Care Quote</a>
+          <a class="btn btn-outline" href="#start" data-plan="Total Care — from $399/mo">Get a Total Care Quote</a>
           <p class="best-for">Best for: online stores and businesses where the website is the storefront.</p>
         </article>
       </div>
@@ -806,6 +846,63 @@ a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visibl
     </div>
   </section>
 
+  <!-- ============ SECTION 4b — START A PLAN (purchase intent) ============
+       Separate from the free health check on purpose. Someone clicking "Choose
+       Peace of Mind" has already decided; sending them to a "not sure which plan
+       fits?" audit form talks them back out of it. This form is the yes path. -->
+  <section id="start" class="band band-night start-band">
+    <div class="wrap">
+      <p class="eyebrow reveal">Start today</p>
+      <h2 class="reveal">Let’s get your website protected.</h2>
+      <p class="reveal start-lede">Tell us where to find your site and we’ll send your welcome pack — a short agreement, your first invoice, and the details we need to take over. <strong>No payment on this page</strong>, and nothing happens to your site until you say go.</p>
+
+      <p class="plan-flag" id="start-flag"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-shield-check"/></svg><span></span></p>
+
+      <form class="health-form reveal" id="start-form" action="https://formspree.io/f/xpqvvpoj" method="POST">
+        <!-- _subject makes plan signups instantly distinguishable from audit
+             requests in the inbox; script.js rewrites it with the chosen plan. -->
+        <input type="hidden" name="_subject" id="start-subject" value="PLAN SIGNUP — from the website">
+        <input type="hidden" name="intent" value="Plan signup">
+        <input type="hidden" name="plan" id="start-plan-field" value="">
+        <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+        <div>
+          <label for="st-plan">Which plan</label>
+          <select id="st-plan" name="plan_choice" required>
+            <option value="" disabled selected>Choose a plan…</option>
+            <option value="Essentials — $129/mo">Essentials — $129/mo</option>
+            <option value="Peace of Mind — $229/mo">Peace of Mind — $229/mo</option>
+            <option value="Total Care — from $399/mo">Total Care — from $399/mo (quote)</option>
+            <option value="Not sure yet">Not sure yet — advise me</option>
+          </select>
+        </div>
+        <div>
+          <label for="st-name">Your name</label>
+          <input id="st-name" name="name" type="text" autocomplete="name" placeholder="Sarah Whitfield" required>
+        </div>
+        <div>
+          <label for="st-site">Your website address</label>
+          <input id="st-site" name="website" type="text" inputmode="url" autocomplete="url"
+                 placeholder="yourbusiness.com" required
+                 pattern="[^@\s]+\.[^@\s]{2,}"
+                 title="Enter your website address, like yourbusiness.com — not an email address.">
+        </div>
+        <div>
+          <label for="st-email">Your email</label>
+          <input id="st-email" name="email" type="email" autocomplete="email" placeholder="you@business.com" required>
+        </div>
+        <div>
+          <label for="st-note">Anything we should know? <span class="opt">(optional)</span></label>
+          <textarea id="st-note" name="notes" rows="2" maxlength="600" placeholder="Who built it, who hosts it, anything broken right now…"></textarea>
+        </div>
+        <button class="btn btn-primary" type="submit">Get My Welcome Pack</button>
+        <p class="form-msg" id="start-msg" role="status"></p>
+        <p class="form-note">We reply the same business day. No contracts — cancel anytime.</p>
+      </form>
+
+      <p class="start-alt reveal">Not ready to commit? <a href="#health-check">Get a free health check first →</a></p>
+    </div>
+  </section>
+
   <!-- ============ SECTION 5 — NEW WEBSITE BUILDS ============ -->
   <section id="builds" class="band band-tint builds">
     <div class="wrap">
@@ -831,7 +928,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visibl
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span><strong>3 months of Peace of Mind care</strong> — updates, backups, monitoring, and up to an hour of changes each month while your site finds its footing</span></li>
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg><span>After 3 months, your plan simply continues at the regular rate — <strong>or cancel with one email.</strong> Almost nobody does, because by then you’ll know what it feels like to never worry about your website.</span></li>
         </ul>
-        <a class="btn btn-primary" href="#health-check" data-plan="New website build">Get a Website Quote</a>
+        <a class="btn btn-primary" href="#start" data-plan="New website build">Get a Website Quote</a>
         <p class="rescue">Already have a website that just needs rescuing? We take over existing sites — <a href="#plans">see the plans above</a>, or <a href="#health-check">start with a free health check</a>.</p>
       </aside>
     </div>
@@ -925,10 +1022,12 @@ a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visibl
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-arrow"/></svg></a>
 
       <div class="or-divider reveal" id="health-check">Not sure which plan fits?</div>
-      <p class="reveal" style="margin-bottom:26px">Send us your website address and we’ll reply with a <strong>free, no-obligation health check</strong> — including anything we find that needs attention.</p>
+      <p class="reveal" style="margin-bottom:26px">Send us your website address and we’ll reply with a <strong>free, no-obligation health check</strong> — what’s working, what needs attention, and which plan we’d honestly recommend. No commitment, and we’ll tell you if you don’t need us.</p>
 
       <p class="plan-flag" id="plan-flag"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-shield-check"/></svg><span></span></p>
       <form class="health-form reveal" id="health-form" action="https://formspree.io/f/xpqvvpoj" method="POST">
+        <input type="hidden" name="_subject" value="Free health check request">
+        <input type="hidden" name="intent" value="Free health check">
         <input type="hidden" name="plan" id="plan-field" value="">
         <!-- Honeypot: invisible to humans, irresistible to bots. Any submission with this
              filled is spam. Formspree treats a field named _gotcha as exactly that and
@@ -1017,31 +1116,67 @@ a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visibl
     });
   });
 
-  /* plan buttons pre-fill the health-check form */
-  var flag = document.getElementById('plan-flag');
-  var field = document.getElementById('plan-field');
+  /* Plan buttons carry purchase intent -> they scroll to the START form and
+     preselect the plan there. The free health check is a separate, lower-commitment
+     path reached from the header CTA and the "not sure which plan fits?" block. */
+  var startFlag  = document.getElementById('start-flag');
+  var startPlan  = document.getElementById('start-plan-field');
+  var startSel   = document.getElementById('st-plan');
+  var startSubj  = document.getElementById('start-subject');
+  var hcFlag     = document.getElementById('plan-flag');
+  var hcField    = document.getElementById('plan-field');
+
   Array.prototype.slice.call(document.querySelectorAll('[data-plan]')).forEach(function (btn) {
     btn.addEventListener('click', function () {
       var plan = btn.getAttribute('data-plan');
-      if (field) field.value = plan;
-      if (flag) { flag.querySelector('span').textContent = 'Asking about: ' + plan; flag.classList.add('show'); }
+      if (startPlan) startPlan.value = plan;
+      if (startSubj) startSubj.value = 'PLAN SIGNUP — ' + plan;
+      /* mirror the choice into the dropdown when it's one of the listed options */
+      if (startSel) {
+        var matched = false;
+        Array.prototype.slice.call(startSel.options).forEach(function (o) {
+          if (o.value === plan) { startSel.value = plan; matched = true; }
+        });
+        if (!matched) startSel.value = 'Not sure yet';
+      }
+      if (startFlag) {
+        startFlag.querySelector('span').textContent = 'Starting with: ' + plan;
+        startFlag.classList.add('show');
+      }
+      /* keep the health-check form's own plan field in step if they wander there */
+      if (hcField) hcField.value = plan;
+      if (hcFlag) { hcFlag.querySelector('span').textContent = 'Asking about: ' + plan; hcFlag.classList.add('show'); }
     });
   });
 
-  /* form guard: explain instead of failing while the endpoint is unconfigured */
-  var form = document.getElementById('health-form');
-  var msg = document.getElementById('form-msg');
-  if (form) {
+  /* Changing the dropdown by hand should update the subject line + badge too. */
+  if (startSel) {
+    startSel.addEventListener('change', function () {
+      var v = startSel.value;
+      if (startPlan) startPlan.value = v;
+      if (startSubj) startSubj.value = 'PLAN SIGNUP — ' + v;
+      if (startFlag) {
+        startFlag.querySelector('span').textContent = 'Starting with: ' + v;
+        startFlag.classList.add('show');
+      }
+    });
+  }
+
+  /* Form guard: explain instead of failing if an endpoint is ever left unconfigured. */
+  [['health-form', 'form-msg'], ['start-form', 'start-msg']].forEach(function (pair) {
+    var form = document.getElementById(pair[0]);
+    var msg  = document.getElementById(pair[1]);
+    if (!form) return;
     form.addEventListener('submit', function (e) {
       if (form.action.indexOf('YOUR-FORM-ID') !== -1) {
         e.preventDefault();
         if (msg) {
-          msg.textContent = 'This form isn’t connected yet. Open the HTML file and follow the “WIRE THE FORM” note at the top — it takes about two minutes with any form service.';
+          msg.textContent = 'This form isn’t connected yet. Open src/markup.html and set the form action to your form provider’s endpoint — it takes about two minutes.';
           msg.classList.add('show');
         }
       }
     });
-  }
+  });
 })();
 
 </script>

@@ -34,29 +34,65 @@
     });
   });
 
-  /* plan buttons pre-fill the health-check form */
-  var flag = document.getElementById('plan-flag');
-  var field = document.getElementById('plan-field');
+  /* Plan buttons carry purchase intent -> they scroll to the START form and
+     preselect the plan there. The free health check is a separate, lower-commitment
+     path reached from the header CTA and the "not sure which plan fits?" block. */
+  var startFlag  = document.getElementById('start-flag');
+  var startPlan  = document.getElementById('start-plan-field');
+  var startSel   = document.getElementById('st-plan');
+  var startSubj  = document.getElementById('start-subject');
+  var hcFlag     = document.getElementById('plan-flag');
+  var hcField    = document.getElementById('plan-field');
+
   Array.prototype.slice.call(document.querySelectorAll('[data-plan]')).forEach(function (btn) {
     btn.addEventListener('click', function () {
       var plan = btn.getAttribute('data-plan');
-      if (field) field.value = plan;
-      if (flag) { flag.querySelector('span').textContent = 'Asking about: ' + plan; flag.classList.add('show'); }
+      if (startPlan) startPlan.value = plan;
+      if (startSubj) startSubj.value = 'PLAN SIGNUP — ' + plan;
+      /* mirror the choice into the dropdown when it's one of the listed options */
+      if (startSel) {
+        var matched = false;
+        Array.prototype.slice.call(startSel.options).forEach(function (o) {
+          if (o.value === plan) { startSel.value = plan; matched = true; }
+        });
+        if (!matched) startSel.value = 'Not sure yet';
+      }
+      if (startFlag) {
+        startFlag.querySelector('span').textContent = 'Starting with: ' + plan;
+        startFlag.classList.add('show');
+      }
+      /* keep the health-check form's own plan field in step if they wander there */
+      if (hcField) hcField.value = plan;
+      if (hcFlag) { hcFlag.querySelector('span').textContent = 'Asking about: ' + plan; hcFlag.classList.add('show'); }
     });
   });
 
-  /* form guard: explain instead of failing while the endpoint is unconfigured */
-  var form = document.getElementById('health-form');
-  var msg = document.getElementById('form-msg');
-  if (form) {
+  /* Changing the dropdown by hand should update the subject line + badge too. */
+  if (startSel) {
+    startSel.addEventListener('change', function () {
+      var v = startSel.value;
+      if (startPlan) startPlan.value = v;
+      if (startSubj) startSubj.value = 'PLAN SIGNUP — ' + v;
+      if (startFlag) {
+        startFlag.querySelector('span').textContent = 'Starting with: ' + v;
+        startFlag.classList.add('show');
+      }
+    });
+  }
+
+  /* Form guard: explain instead of failing if an endpoint is ever left unconfigured. */
+  [['health-form', 'form-msg'], ['start-form', 'start-msg']].forEach(function (pair) {
+    var form = document.getElementById(pair[0]);
+    var msg  = document.getElementById(pair[1]);
+    if (!form) return;
     form.addEventListener('submit', function (e) {
       if (form.action.indexOf('YOUR-FORM-ID') !== -1) {
         e.preventDefault();
         if (msg) {
-          msg.textContent = 'This form isn’t connected yet. Open the HTML file and follow the “WIRE THE FORM” note at the top — it takes about two minutes with any form service.';
+          msg.textContent = 'This form isn’t connected yet. Open src/markup.html and set the form action to your form provider’s endpoint — it takes about two minutes.';
           msg.classList.add('show');
         }
       }
     });
-  }
+  });
 })();
