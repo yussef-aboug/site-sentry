@@ -111,6 +111,11 @@ checks, rather than reporting reassuring passes it never verified. `Could not ch
 unknown, never "fine". It only ever runs against a site whose owner asked us to look, and never
 logs in, POSTs, or probes for vulnerabilities.
 
+> **Writing new `.ps1` files: keep them pure ASCII.** Windows PowerShell reads scripts as
+> ANSI unless they carry a UTF-8 BOM, so a UTF-8 em-dash or curly quote arrives as mojibake
+> (`—` becomes `â€"`) and breaks parsing with a confusing "Unexpected token" error. Use `-`
+> and `'` in scripts; save the typography for the HTML.
+
 **On Windows, run it from PowerShell** — PowerShell has no `bash`, so use the wrapper (it
 finds Git Bash for you, and can build the report in the same command):
 

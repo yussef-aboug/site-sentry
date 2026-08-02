@@ -1,4 +1,4 @@
-# SiteSentry — run a prospect health check from PowerShell.
+# SiteSentry - run a prospect health check from PowerShell.
 # PowerShell has no `bash`, so this finds Git Bash and runs the scan for you.
 #
 #   powershell -ExecutionPolicy Bypass -File .\scripts\prospect-check.ps1 -Site example.com
@@ -63,7 +63,7 @@ if (-not $Report) {
 
 # --- build the report -------------------------------------------------------
 $node = Get-Command node -ErrorAction SilentlyContinue
-if (-not $node) { throw "Node.js not found on PATH — needed to build the report. Install from https://nodejs.org" }
+if (-not $node) { throw "Node.js not found on PATH - needed to build the report. Install from https://nodejs.org" }
 
 if (-not $Out) {
   $Out = Join-Path $agentDir "reports\$slug.html"
@@ -87,5 +87,5 @@ if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 Write-Host ""
 Write-Host "Report: $Out" -ForegroundColor Green
-Write-Host "This is a DRAFT. Read it, then YOU send it — nothing goes to the prospect automatically." -ForegroundColor Yellow
+Write-Host "This is a DRAFT. Read it, then YOU send it - nothing goes to the prospect automatically." -ForegroundColor Yellow
 Write-Host "Open it with:  start `"`" `"$Out`"" -ForegroundColor DarkGray
