@@ -41,10 +41,13 @@ Everything you need to change is marked on the page with a **dashed amber underl
 1. **Replace the placeholders** (in `src/markup.html`, then rebuild):
    `[Business Name]`, the build price `[1,495]`, `[hello@yourbusiness.com]`,
    `[Your Area]`, the two testimonial slots, and the trust-badge numbers.
-2. **Wire up the form:** search `src/markup.html` for `YOUR-FORM-ID` and paste your
-   [Formspree](https://formspree.io) / [Basin](https://usebasin.com) / Netlify Forms
-   endpoint, or swap the `<form>` for your provider's embed. Until then, the form
-   shows a friendly "not connected yet" message instead of failing.
+2. **The form is wired** to a [Formspree](https://formspree.io) endpoint — submissions
+   email whichever address that Formspree form notifies, and a hidden `_gotcha` honeypot
+   discards bot spam without putting a CAPTCHA in front of real visitors. The hidden
+   `plan` field records which plan button the visitor clicked before converting. To change
+   providers, edit the `<form action>` in `src/markup.html` and rebuild. (`src/script.js`
+   keeps a guard that shows a "not connected yet" message if the action is ever reset to a
+   `YOUR-FORM-ID` placeholder.)
 3. **Point the plan buttons** at payment or booking links when ready. By default they
    scroll to the health-check form and pre-fill the plan name.
 4. **Delete the "Template note"** in the Client stories section once you add real
