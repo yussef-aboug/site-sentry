@@ -11,6 +11,20 @@ HOST="$(printf '%s' "$URL" | sed -E 's~https?://~~; s~/.*$~~')"
 
 echo "=== SiteSentry health check: $URL ($(date -u +'%Y-%m-%d %H:%M UTC')) ==="
 
+# 0. Was this answered by a CACHE rather than by the site itself?
+# This matters more than it looks. A page cache (WP Super Cache, LiteSpeed, Cloudflare)
+# can keep serving a good copy of a page whose origin is now throwing a fatal error, so a
+# post-change health check PASSES on a site that is actually broken for anyone who misses
+# the cache. Always flush the cache before verifying a change.
+CACHE_HDRS="$(curl -sSI -L -A "Mozilla/5.0 (SiteSentry-HC)" --max-time 20 "$URL" 2>/dev/null \
+  | grep -iE '^(x-cache|cf-cache-status|x-litespeed-cache|x-proxy-cache|x-wp-super-cache):' | tr -d '\r')"
+if printf '%s' "$CACHE_HDRS" | grep -qi 'hit'; then
+  echo "[WARN] This response came from a CACHE - it may not reflect the live site."
+  printf '%s\n' "$CACHE_HDRS" | sed 's/^/         /'
+  echo "         Flush it (wp cache flush / wp litespeed-purge all / host or CDN purge) and"
+  echo "         re-run: otherwise this check can pass while the origin is broken."
+fi
+
 # 1. HTTP status + response time (follow redirects, browser-ish UA)
 read -r CODE TIME < <(curl -sS -o /tmp/hc_body.html -L -A "Mozilla/5.0 (SiteSentry-HC)" \
   -w "%{http_code} %{time_total}" --max-time 30 "$URL" 2>/dev/null || echo "000 0")

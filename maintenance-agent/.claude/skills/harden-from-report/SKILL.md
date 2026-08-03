@@ -59,6 +59,19 @@ flags the scan actually raised set to `true`. Everything else stays `false`.
 `readme.html`, `license.txt` — delete after confirming the backup. These are restored by core
 updates, so re-check them at the next update run rather than assuming they stay gone.
 
+### Redirects and anything else in server config
+A `http -> https` redirect lives in the server layer, and **which layer depends on the stack**:
+- `.htaccess` is an **Apache** feature. A pure nginx server ignores it entirely, so a rule
+  written there does nothing while looking like a fix. Many managed hosts run nginx as a TLS
+  edge in front of Apache, where `.htaccess` *does* work — the `Server:` header shows you the
+  edge, not the backend.
+- Behind a TLS-terminating proxy, `%{HTTPS}` is often `off` even on an https request; a naive
+  rule then redirects https to https forever. Check `X-Forwarded-Proto` as well.
+- So: **verify the redirect actually happens** (`curl -sSI http://<host>` returns 301 to
+  https, and `curl -sSI https://<host>` does NOT redirect) rather than trusting that editing
+  the file worked. Record which layer the fix landed in, and save a copy of the original file
+  as the rollback point.
+
 ### Things that are NOT hardening fixes
 - **Missing meta description** is a content decision (what should it *say*?). Route to
   `small-edits` with the client's or operator's wording — do not invent marketing copy.
@@ -79,8 +92,20 @@ critical page in the site file — page builders and inline scripts break in way
 spot-check never reveals. If there is no staging environment, Report-Only is where it stays.
 
 ## 6. Verify each fix by RE-SCANNING - and know what cannot clear
-After each change: `scripts/health-check.sh <url> <keyword>` (site still healthy), then re-run
-the scan and confirm that specific finding is gone.
+
+**Flush the page cache BEFORE every verification.** This is required, not tidy-up:
+```bash
+wp cache flush            # plus: wp litespeed-purge all / wp super-cache flush / CDN purge
+```
+A page cache serves the copy it stored *before* your change, which cuts both ways:
+- a working fix looks like it failed (annoying), and
+- **a broken site looks healthy** (dangerous) — the cache keeps serving a good page while the
+  origin throws a fatal error, so the health check passes and you move on believing you
+  verified something. `health-check.sh` now warns when a response arrives with a cache-HIT
+  header, but the warning is a backstop, not a substitute for flushing.
+
+Then: `scripts/health-check.sh <url> <keyword>` (site still healthy), re-run the scan, and
+confirm that specific finding is gone.
 
 Expected outcomes — do not chase a finding that cannot clear from WordPress:
 
