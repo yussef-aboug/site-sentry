@@ -23,6 +23,13 @@ This is the **human** half (collecting access + setting up accounts). The agent'
 - [ ] **Maintenance window** — when changes are least disruptive for this business.
 
 ## Set up access the secure way (never share the client's personal login)
+
+> **This is the step that stalls onboarding.** A website address alone gives the agent nothing
+> but public read access — it cannot log in or change anything. Getting real access differs on
+> every host, so the detail lives in **[`ACCESS-PLAYBOOK.md`](ACCESS-PLAYBOOK.md)**: a
+> ready-to-send client email, how to identify the host, host-by-host SSH instructions
+> (managed WP, cPanel, VPS, Cloudflare), what to do when there is no SSH, and how to test the
+> connection yourself before the agent uses it.
 - [ ] Client creates a **new dedicated admin account** for SiteSentry in wp-admin (its own
       email, strong password). You never log in as the client.
 - [ ] Get **SSH access** from the host and add a **key-based alias** to `~/.ssh/config` named

@@ -265,7 +265,10 @@ Follow `maintenance-agent/CLIENT-ONBOARDING.md`. The short version:
    `sunrise-bakery`. Never recycle one.
 2. **Get access securely** — the client creates a **new dedicated admin account** for us (never
    their personal login), and you add a key-based SSH alias named for the slug. Prove it
-   yourself: `ssh <slug> "wp option get home"`.
+   yourself: `ssh <slug> "wp option get home"`. **A URL alone is not access** — it only enables
+   the public health check. Getting real access differs per host, so follow
+   `maintenance-agent/ACCESS-PLAYBOOK.md`: the client email to send, host-by-host SSH setup,
+   and what to do when a host offers no SSH at all.
 3. **Stand up monitoring** — WP Umbrella (backups + reports) and UptimeRobot (5-minute uptime).
 4. **Hand to the agent:** *"Run the site-onboarding skill for the new client `<slug>` at
    `<url>`, plan `<plan>`."* It creates the registry entry, **binds the site's identity**,
