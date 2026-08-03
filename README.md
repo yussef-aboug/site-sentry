@@ -1,5 +1,10 @@
 # Site Sentry
 
+> **New here?** Read [`HANDBOOK.md`](HANDBOOK.md) — the full operations guide: what the
+> business is, what the agent can do, how to run it day to day, and the hard-won lessons
+> behind every safety guard.
+
+
 The SiteSentry business in one repo — the thing you sell, and the thing you run it with.
 
 | Folder | What it is |
