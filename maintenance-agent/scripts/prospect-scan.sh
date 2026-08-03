@@ -88,6 +88,22 @@ awk -v t="${TOTAL:-0}" 'BEGIN{ exit !(t>3) }' \
 KB=$(( SIZE / 1024 ))
 [ "$KB" -gt 2000 ] && warn "Homepage first response is ${KB}KB - heavy" \
                    || info "Homepage response size: ${KB}KB"
+
+# Say whether a cache answered, because it changes what the timing above MEANS.
+# A cache HIT flatters the site; a MISS right after a purge makes a healthy site look
+# slow. Without this line a cold-cache reading is indistinguishable from a real
+# regression, and we would chase (or dismiss) the wrong thing.
+CACHE_STATE="$(curl -sSI -L -A "$UA" --max-time 20 "$URL" 2>/dev/null \
+  | grep -iE '^(x-cache|cf-cache-status|x-litespeed-cache|x-proxy-cache|x-wp-super-cache):' \
+  | tr -d '\r' | head -2 | sed 's/^/       /')"
+if [ -n "$CACHE_STATE" ]; then
+  if printf '%s' "$CACHE_STATE" | grep -qi 'hit'; then
+    info "Served from cache - the timing above is the cached (best-case) speed:"
+  else
+    info "NOT served from cache - the timing above is the slower uncached path (normal right after a cache purge):"
+  fi
+  printf '%s\n' "$CACHE_STATE"
+fi
 case "$EFF" in "$URL"|"$URL/"|'') :;; *) info "Redirects to: $EFF";; esac
 
 # ---------------------------------------------------------------- https / ssl
