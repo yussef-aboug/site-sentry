@@ -101,17 +101,36 @@ if [ "${URL:0:5}" = "https" ]; then
   # as the prospect's would be flatly wrong. Only trust a cert whose CN/SAN matches.
   SUBJ="$(printf '%s' "$CERT" | openssl x509 -noout -subject -ext subjectAltName 2>/dev/null | tr 'A-Z' 'a-z')"
   BASE="$(printf '%s' "$HOST" | tr 'A-Z' 'a-z' | sed -E 's/^www\.//')"
-  if [ -n "$CERT" ] && ! printf '%s' "$SUBJ" | grep -qF "$BASE"; then
+  # A wildcard cert (*.instawp.site, *.myhost.com) legitimately covers this host but never
+  # contains its full name, so a literal match would cry "interception" on perfectly good
+  # shared/managed hosting. Accept the exact name OR the wildcard for its parent domain.
+  # Derive the wildcard from the FULL host, not the www-stripped one: stripping first
+  # would turn www.example.com into *.com, which is absurdly over-broad.
+  WILD="*.$(printf '%s' "$HOST" | tr 'A-Z' 'a-z' | cut -d. -f2-)"
+  case "$WILD" in *.*.*) :;; *) WILD="";; esac   # refuse a bare "*.com"-shaped match
+  CERT_OK=0
+  if [ -n "$CERT" ]; then
+    printf '%s' "$SUBJ" | grep -qF "$BASE" && CERT_OK=1
+    [ -n "$WILD" ] && printf '%s' "$SUBJ" | grep -qF "$WILD" && CERT_OK=1
+  fi
+  # Honest limit: this catches a certificate issued for a DIFFERENT name. It cannot
+  # catch an interceptor that mints a correctly-named cert from a CA the machine
+  # already trusts - name matching alone can't see that. Fine for an operator laptop;
+  # worth knowing if you ever run this from behind a corporate TLS proxy.
+  if [ -n "$CERT" ] && [ "$CERT_OK" = 0 ]; then
     warn "Could not validate the certificate for $HOST - the TLS connection was answered by something else (proxy/WAF interception). SSL expiry NOT verified; check it manually."
     EXP=""
+  elif [ -z "$CERT" ]; then
+    warn "Could not read the SSL certificate - check it manually in a browser."
   fi
-  if [ -n "$EXP" ]; then
+  # Only report expiry when the cert is genuinely this site's.
+  if [ -n "$EXP" ] && [ "$CERT_OK" = 1 ]; then
     EXP_S=$(date -d "$EXP" +%s 2>/dev/null || echo 0); DAYS=$(( (EXP_S - $(date +%s)) / 86400 ))
     if   [ "$EXP_S" = 0 ];   then info "Certificate expiry: $EXP"
     elif [ "$DAYS" -lt 0 ];  then fail "SSL certificate has EXPIRED - browsers show a security warning"
     elif [ "$DAYS" -lt 21 ]; then warn "SSL certificate expires in $DAYS days - renewal needed soon"
     else pass "SSL certificate valid ($DAYS days remaining${ISS:+, issued by $ISS})"; fi
-  else warn "Could not read the SSL certificate"; fi
+  fi
   # http -> https enforcement
   # Only conclude "no redirect" if the http:// request actually completed - a failed
   # request tells us nothing about the site's redirect behaviour.
@@ -119,7 +138,11 @@ if [ "${URL:0:5}" = "https" ]; then
     case "$HRED" in
       000\|*) info "Could not check http:// redirect (no response) - not confirmed either way";;
       *https://*) pass "Insecure http:// visitors are redirected to https";;
-      *) warn "http:// does not redirect to https - visitors can land on an unencrypted version";;
+      # Urgent, not advisory: the site HAS https but does not force it, so a visitor - or
+      # an admin logging in at the default wp-login.php - can transact over an
+      # unencrypted connection where passwords travel in clear text. Reliably detected,
+      # real consequence, cheap fix. It belongs at the top of the list, not buried.
+      *) fail "http:// does not redirect to https - anyone visiting the insecure address stays unencrypted, including at the login page, where the password travels in clear text";;
     esac
   else
     info "Could not check http:// redirect (request failed) - not confirmed either way"
@@ -144,35 +167,35 @@ fi
 echo; echo "--- Publicly exposed files & endpoints ---"
 # Each check reports one of three states - exposed / confirmed-not-exposed / could-not-check.
 # "Could not check" must never be rendered as reassurance.
-unchecked(){ info "Could not check $1 (no response) - not confirmed either way"; }
+unchecked(){ info "Could not check $1 - not confirmed either way"; }
 
 C=$(get "/readme.html")
-if [ "$C" = 000 ]; then unchecked "readme.html"
+if [ "$C" = 000 ]; then unchecked "readme.html (no response)"
 elif reachable_200 "$C" && grep -qi wordpress "$TMP/body" 2>/dev/null; then
   V="$(grep -oiE 'Version [0-9.]+' "$TMP/body" | head -1)"
   warn "readme.html is publicly readable${V:+ and discloses $V} - should be removed"
 else pass "readme.html not exposed (HTTP $C)"; fi
 
 C=$(get "/xmlrpc.php")
-if [ "$C" = 000 ]; then unchecked "xmlrpc.php"
+if [ "$C" = 000 ]; then unchecked "xmlrpc.php (no response)"
 elif [ "$C" = "200" ] || [ "$C" = "405" ]; then
   warn "xmlrpc.php is open - a common brute-force and amplification target; usually safe to disable"
 else pass "xmlrpc.php not openly reachable (HTTP $C)"; fi
 
 C=$(get "/wp-content/debug.log")
-if [ "$C" = 000 ]; then unchecked "debug.log"
+if [ "$C" = 000 ]; then unchecked "debug.log (no response)"
 elif reachable_200 "$C"; then
   fail "Debug log is publicly downloadable at /wp-content/debug.log - can leak file paths and errors"
 else pass "No public debug.log (HTTP $C)"; fi
 
 C=$(get "/wp-content/uploads/")
-if [ "$C" = 000 ]; then unchecked "uploads directory listing"
+if [ "$C" = 000 ]; then unchecked "uploads directory listing (no response)"
 elif reachable_200 "$C" && grep -qiE 'index of|<title>index of' "$TMP/body" 2>/dev/null; then
   warn "Uploads folder allows directory browsing - anyone can list every uploaded file"
 else pass "Uploads folder is not browsable (HTTP $C)"; fi
 
 C=$(get "/wp-json/wp/v2/users")
-if [ "$C" = 000 ]; then unchecked "public username listing"
+if [ "$C" = 000 ]; then unchecked "public username listing (no response)"
 elif reachable_200 "$C" && grep -qE '"slug"' "$TMP/body" 2>/dev/null; then
   N=$(grep -oE '"slug":"[^"]+"' "$TMP/body" | wc -l | tr -d ' ')
   warn "The REST API publicly lists usernames ($N found) - hands attackers half of every login"
@@ -180,7 +203,7 @@ else pass "Usernames are not publicly listed via the REST API (HTTP $C)"; fi
 
 C=$(get "/wp-login.php")
 case "$C" in
-  000)     unchecked "login page";;
+  000)     unchecked "login page (no response)";;
   200|301|302) info "Login page is at the default address (wp-login.php) - it's the #1 brute-force target";;
   403|404) pass "Default login page is hidden or protected (HTTP $C)";;
   *)       info "Login page returned HTTP $C";;
@@ -212,13 +235,17 @@ if [ "$IS_WP" = 1 ]; then
   else info "No plugins detectable from the homepage source"; fi
   THEME="$(grep -oE '/wp-content/themes/[a-z0-9._-]+' "$TMP/home" 2>/dev/null | awk -F/ '{print $4}' | sort -u | head -2 | tr '\n' ' ')"
   [ -n "$THEME" ] && info "Theme: $THEME"
-  # security/backup plugin presence is a strong sales signal
+  # Security and backup plugins are ADMIN-SIDE: they usually add nothing to a public
+  # page, so absence from the homepage source is NOT evidence of absence from the site.
+  # (Proven on our own sandbox: Wordfence and UpdraftPlus were both installed and
+  # neither was detectable.) Presence is meaningful; absence is genuinely unknown, and
+  # must never be reported as "you have no backups" - that claim would be indefensible.
   grep -qiE 'wordfence|ithemes-security|solid-security|sucuri|all-in-one-wp-security' "$TMP/plugins" 2>/dev/null \
-    && pass "A security plugin appears to be installed" \
-    || warn "No security plugin detected - no login protection or malware scanning visible"
+    && pass "A security plugin is visibly installed" \
+    || unchecked "whether a security plugin is installed (admin-side plugins are invisible from outside)"
   grep -qiE 'updraft|backwpup|duplicator|backupbuddy|wp-umbrella' "$TMP/plugins" 2>/dev/null \
-    && pass "A backup plugin appears to be installed" \
-    || warn "No backup plugin detected - if this site is lost there may be nothing to restore from"
+    && pass "A backup plugin is visibly installed" \
+    || unchecked "whether backups are running (backup plugins are invisible from outside - this is the single most important thing to confirm)"
 fi
 
 # ---------------------------------------------------------------- basics / SEO hygiene
