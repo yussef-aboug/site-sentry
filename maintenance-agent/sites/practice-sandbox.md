@@ -72,7 +72,7 @@ staging: this IS the practice environment
 
 ## Service tracking (agent updates these; roster.sh reads them)
 last_update_run: 2026-07-21
-last_security_scan: 2026-07-21
+last_security_scan: 2026-08-03
 last_link_check: [date]
 last_performance_check: [date]
 last_report: [YYYY-MM]
