@@ -108,6 +108,30 @@ JSON file and pass `--findings`:
 ```
 Keep the structure, improve the English. Never add a finding the scan didn't produce.
 
+## 3c. Severity: holes vs hardening (how to rank, and what NOT to inflate)
+Rank by **what can actually hurt this business**, not by how alarming a checklist makes it look.
+
+- **A hole** is directly usable by an attacker, or is already costing the owner something:
+  site down, no HTTPS at all, HTTPS not enforced (passwords in clear text at wp-login),
+  expired certificate, publicly downloadable `debug.log`, exposed backups, malware evidence.
+  These lead the report.
+- **Hardening** reduces the blast radius of other problems but opens no door by itself:
+  missing `X-Content-Type-Options`, `X-Frame-Options`, CSP, version disclosure, open
+  `xmlrpc.php`, missing meta description. Worth fixing, cheap, professional — **not urgent**.
+- Real WordPress sites are compromised by outdated plugins, weak passwords, and abandoned
+  themes — rarely by a missing header. Do not present hardening as an emergency. A prospect
+  who gets a second opinion and hears "that was overblown" is a prospect you lost, and
+  deservedly.
+- Anything the scan could not determine is **unknown**, never a finding. "No backup plugin
+  detected" from outside is not "you have no backups" — that claim is indefensible and is the
+  most damaging one to get wrong.
+
+**Ordering trap — HSTS comes last.** HSTS instructs browsers to refuse `http://` for this
+domain for months, cached client-side with no click-through. Enabling it before HTTPS is
+reliably enforced converts any later certificate problem into a hard outage. Correct order:
+fix the `http -> https` redirect, confirm HTTPS is solid, *then* add HSTS with a short
+max-age and raise it. Never the reverse.
+
 ## 4. Recommend a plan (see CADENCE.md for what each includes)
 Recommend by fit, not by price:
 - **Store detected (WooCommerce/commerce plugin in the source) → Total Care, always.** Stores
