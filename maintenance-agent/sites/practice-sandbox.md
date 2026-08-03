@@ -41,7 +41,16 @@ maintenance_window: anytime
 client_contact: operator (you)
 
 ## Verification targets
-homepage_keyword: "Welcome to WordPress"   # default first-post text; replace once real content exists
+# Corrected 2026-08-03: the homepage is the default blog listing, so "Welcome to WordPress"
+# (the old first-post text) is no longer on it - that mismatch fired a Night Watch alert on a
+# perfectly healthy site. Angle brackets pin the match to rendered text, so an asset path like
+# blog.css cannot satisfy it. Verified against a realistic WordPress fatal-error page: matches
+# the healthy page, does not match the error page.
+homepage_keyword: ">Blog<"
+# KNOWN WEAKNESS: this sandbox has no real content, so the only available keyword is a generic
+# word. If the theme ever renders a nav link reading "Blog" while the page body fails, this
+# could still pass on a partially broken page. Acceptable on a practice site; a real client
+# gets their business name, tagline, or phone number instead - see _TEMPLATE.md.
 critical_pages:
   - https://oddball-scarab-73427d.instawp.site/
   - https://oddball-scarab-73427d.instawp.site/contact/   # not built yet — currently 404, build in a later lesson
