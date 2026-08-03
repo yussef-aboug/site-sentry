@@ -174,7 +174,14 @@ grep -qiE 'wp-content|wp-includes|/wp-json' "$TMP/home" 2>/dev/null && IS_WP=1
 GEN="$(grep -oiE '<meta name="generator" content="WordPress [0-9.]+' "$TMP/home" 2>/dev/null | grep -oE '[0-9.]+$' | head -1)"
 if [ "$IS_WP" = 1 ]; then
   info "Platform: WordPress${GEN:+ (version $GEN publicly visible)}"
-  [ -n "$GEN" ] && warn "WordPress version $GEN is exposed in the page source - tells attackers exactly which exploits to try"
+  # Report the good state too, not just the bad one. A check that only speaks when
+  # something is wrong makes a completed fix vanish silently instead of showing up as a
+  # win - which under-credits real work in the client's report.
+  if [ -n "$GEN" ]; then
+    warn "WordPress version $GEN is exposed in the page source - tells attackers exactly which exploits to try"
+  else
+    pass "WordPress version is not disclosed in the page source"
+  fi
 else
   info "This does not look like a WordPress site - our care plans are WordPress-specific. Confirm before quoting."
 fi
@@ -231,9 +238,14 @@ curl -sSI -L -A "$UA" --max-time 20 "$URL" > "$TMP/hdr" 2>/dev/null
 hdr(){ grep -qi "^$1:" "$TMP/hdr"; }
 hdr strict-transport-security && pass "HSTS enabled (forces secure connections)" \
   || warn "Missing HSTS header - browsers aren't told to always use HTTPS"
-hdr x-content-type-options || warn "Missing X-Content-Type-Options - allows MIME-sniffing attacks"
-hdr x-frame-options || hdr content-security-policy \
-  || warn "Missing X-Frame-Options/CSP - the site can be framed for clickjacking"
+hdr x-content-type-options \
+  && pass "X-Content-Type-Options set (blocks MIME-sniffing attacks)" \
+  || warn "Missing X-Content-Type-Options - allows MIME-sniffing attacks"
+if hdr x-frame-options || hdr content-security-policy; then
+  pass "Clickjacking protection present (X-Frame-Options/CSP)"
+else
+  warn "Missing X-Frame-Options/CSP - the site can be framed for clickjacking"
+fi
 hdr content-security-policy && pass "Content-Security-Policy present"
 SRV="$(grep -i '^server:' "$TMP/hdr" | head -1 | cut -d: -f2- | tr -d '\r' | sed 's/^ //')"
 [ -n "$SRV" ] && info "Web server: $SRV"
