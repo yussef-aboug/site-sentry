@@ -52,6 +52,18 @@ maintenance_window: Tuesdays 07:00–09:00 ET
 client_contact: [Name] — [email]   # Agent DRAFTS emails only; operator sends
 
 ## Verification targets (health checks use these)
+# Choosing homepage_keyword - this string is how every health check decides "did the page
+# actually render?", so a bad one causes false alarms on a healthy site.
+#   GOOD: visible page CONTENT that only appears when WordPress, the theme and the database
+#         are all working - the business name, a tagline, a phone number, a headline that
+#         won't change with routine edits.
+#   BAD:  anything that also appears in asset URLs or markup (a bare word like "blog" matches
+#         blog.css), boilerplate present on error pages, or seasonal/promotional copy that
+#         the client will edit away.
+#   TIP:  wrapping it in angle brackets (">Contact Us<") pins the match to rendered text
+#         rather than a filename or a link href.
+#   When the client legitimately changes their homepage, UPDATE THIS - a stale keyword is
+#   indistinguishable from a broken site to the health check.
 homepage_keyword: "[Unique phrase that appears on the healthy homepage]"
 critical_pages:
   - https://example.com/            # home
