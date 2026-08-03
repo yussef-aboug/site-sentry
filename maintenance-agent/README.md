@@ -43,6 +43,7 @@ Skills, by what they deliver:
 | Skill | Delivers | Tiers |
 |---|---|---|
 | `prospect-health-check` | Free audit for a LEAD (pre-sale), report + plan rec | sales |
+| `harden-from-report` | Apply + verify scan fixes on a MANAGED site | all |
 | `site-onboarding` | Take a new site into care | all |
 | `safe-update` | Security/software updates (non-stores) | all (monthly/weekly by tier) |
 | `backup-restore` | Backups, restores, monthly drill | all |
